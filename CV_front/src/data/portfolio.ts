@@ -61,7 +61,6 @@ export const profile = {
     "Docker",
     "PowerShell",
     "Git",
-    "Nmap",
     "Figma",
     "Arduino",
     "Machine Learning",
