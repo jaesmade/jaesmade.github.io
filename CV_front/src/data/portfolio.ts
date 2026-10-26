@@ -21,8 +21,8 @@ export const profile = {
   intro:
     "I build web applications and intelligent systems.",
   about: [
-    "I’m a Computer Science graduate specializing in Intelligent Systems from Laguna State Polytechnic University.",
-    "My projects include inclusive job matching and farming applications.",
+    "I’m an automation enthusiast and a Computer Science graduate specializing in Intelligent Systems from Laguna State Polytechnic University. I’m drawn to finding simpler ways to get things done through code.",
+    "I enjoy exploring browser automation, scripting, and data workflows to take the repetition out of everyday tasks. My goal is to build practical, reliable tools that save time and let people focus on work that needs their attention.",
   ],
   socials: [
     { label: "GitHub", url: "https://github.com/jaesmade" },
