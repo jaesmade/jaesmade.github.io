@@ -40,6 +40,18 @@ function Icon({ name }: { name: string }) {
     </svg>
   );
 }
+function SocialIcon({ name }: { name: string }) {
+  const paths: Record<string, string> = {
+    GitHub: "M12 .297a12 12 0 0 0-3.793 23.385c.6.111.82-.261.82-.577v-2.234c-3.338.726-4.043-1.416-4.043-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.303-5.467-1.334-5.467-5.931 0-1.31.469-2.381 1.236-3.221-.124-.303-.536-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.52 11.52 0 0 1 12 6.097c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.655 1.652.243 2.873.119 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.625-5.479 5.922.43.372.823 1.102.823 2.222v3.293c0 .319.216.694.825.576A12.001 12.001 0 0 0 12 .297Z",
+    Facebook: "M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.025 4.388 11.02 10.125 11.927v-8.437H7.078v-3.49h3.047v-2.66c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.971h-1.513c-1.49 0-1.956.931-1.956 1.887v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.093 24 18.098 24 12.073Z",
+    LinkedIn: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.049c.476-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286ZM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124Zm1.782 13.019H3.555V9h3.564v11.452ZM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003Z",
+  };
+  return (
+    <svg className="social-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d={paths[name]} />
+    </svg>
+  );
+}
 function Divider() {
   return <div className="divider" aria-hidden="true" />;
 }
@@ -169,7 +181,6 @@ export default function App() {
         <a className="wordmark" href="#home">
           {profile.handle}
         </a>
-        <span className="header-note">A little corner of the internet.</span>
         <a className="availability" href="#contact">
           <i />
           {profile.status}
@@ -179,9 +190,6 @@ export default function App() {
         {page === "home" ? (
           <section className="home-layout">
             <div className="intro">
-              <div className="eyebrow">
-                HELLO, WORLD!
-              </div>
               <h1>
                 Hey, I'm
                 <br />
@@ -191,9 +199,6 @@ export default function App() {
                 </span>
               </h1>
               <p className="intro-copy">{profile.intro}</p>
-              <p className="tagline-note">
-                <span>{profile.tagline}</span>
-              </p>
               <Divider />
               <div className="social-row">
                 <span>FIND ME ELSEWHERE</span>
@@ -204,7 +209,8 @@ export default function App() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {s.label} ↗
+                    <SocialIcon name={s.label} />
+                    {s.label} <span aria-hidden="true">↗</span>
                   </a>
                 ))}
               </div>
@@ -214,19 +220,16 @@ export default function App() {
                   {
                     id: "about",
                     title: "About me",
-                    text: "The person behind the pixels.",
                     color: "tone-warm",
                   },
                   {
                     id: "portfolio",
                     title: "My projects",
-                    text: "Ideas turned into things that work.",
                     color: "tone-cool",
                   },
                   {
                     id: "contact",
-                    title: "Let’s connect",
-                    text: "Good things start with a hello.",
+                    title: "Contact",
                     color: "tone-soft",
                   },
                 ].map((item) => (
@@ -240,7 +243,6 @@ export default function App() {
                     </span>
                     <span>
                       <strong>{item.title}</strong>
-                      <small>{item.text}</small>
                     </span>
                     <Icon name="arrow" />
                   </a>
@@ -255,9 +257,9 @@ export default function App() {
             <h1>
               {
                 {
-                  about: "Behind the pixels.",
-                  portfolio: "Things I’ve built.",
-                  contact: "Let’s make something.",
+                  about: "About me",
+                  portfolio: "Projects",
+                  contact: "Contact",
                   home: "",
                 }[page]
               }
@@ -420,8 +422,7 @@ export default function App() {
             {page === "contact" && (
               <div className="contact-panel">
                 <p>
-                  Have a project, an opportunity, or just something interesting
-                  to share? I’d love to hear from you.
+                  Email me about projects or job opportunities.
                 </p>
                 <a className="primary-button" href={`mailto:${profile.email}`}>
                   <Icon name="contact" />
@@ -435,7 +436,8 @@ export default function App() {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {s.label} ↗
+                      <SocialIcon name={s.label} />
+                      {s.label} <span aria-hidden="true">↗</span>
                     </a>
                   ))}
                 </div>
@@ -456,10 +458,6 @@ export default function App() {
       <footer>
         <span>
           © {new Date().getFullYear()} {profile.name}
-        </span>
-        <span>
-          Made with curiosity. Built for
-          the web.
         </span>
       </footer>
       <nav className="dock" aria-label="Main navigation">

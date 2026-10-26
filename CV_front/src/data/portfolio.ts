@@ -18,16 +18,16 @@ export const profile = {
   location: "Philippines",
   email: "jaesmade@gmail.com",
   status: "Open to opportunities",
-  tagline: "A little code. A lot of curiosity.",
   intro:
-    "A developer with a curious mind. I build useful systems, intelligent applications, and thoughtful digital experiences.",
+    "I build web applications and intelligent systems.",
   about: [
-    "I’m a Computer Science graduate specializing in Intelligent Systems from Laguna State Polytechnic University, with a passion for software development, web technologies, and intelligent applications.",
-    "I enjoy turning real-world problems into practical tools — from inclusive job matching to smarter farming. My work brings together clean interfaces, data, and a desire to keep learning.",
+    "I’m a Computer Science graduate specializing in Intelligent Systems from Laguna State Polytechnic University.",
+    "My projects include inclusive job matching and farming applications.",
   ],
   socials: [
     { label: "GitHub", url: "https://github.com/jaesmade" },
     { label: "Facebook", url: "https://www.facebook.com/joshandrew.esmade/" },
+    { label: "LinkedIn", url: "https://www.linkedin.com/in/josh-andrew-esmade-6367b43a9/" },
   ],
   education: [
     {
