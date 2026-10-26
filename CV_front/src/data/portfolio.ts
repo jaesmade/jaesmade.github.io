@@ -1,4 +1,13 @@
-import photo from "../assets/me.png";
+import photo from "../assets/me.webp";
+export type Certificate = {
+  id: string;
+  title: string;
+  issuer: string;
+  issued?: string;
+  file?: string;
+  credentialUrl?: string;
+};
+
 // Edit this file to personalize the template. Omit project URLs until a demo is available.
 export const profile = {
   name: "Josh Andrew Esmade",
@@ -31,26 +40,46 @@ export const profile = {
     "HTML",
     "CSS",
     "JavaScript",
+    "TypeScript",
     "React",
+    "Next.js",
+    "Node.js",
+    "Electron",
     "PHP",
     "Python",
+    "pandas",
+    "openpyxl",
     "MySQL",
-    "Node.js",
+    "PostgreSQL",
+    "Supabase",
+    "MongoDB",
+    "SQLite",
+    "Redis",
+    "Playwright",
+    "Selenium",
+    "Vite",
+    "Docker",
+    "PowerShell",
     "Git",
+    "Nmap",
     "Figma",
     "Arduino",
     "Machine Learning",
     "NLP",
     "UI/UX Design",
   ],
+  // Add your real credentials here. See README.md for an example entry.
+  // File paths are relative to public/, e.g. "certificates/my-certificate.pdf".
+  certificates: [] as Certificate[],
 };
-type Project = {
+export type Project = {
   title: string;
   image: string;
   imageAlt: string;
   category: string;
   description: string;
   tech: string[];
+  guide: string[];
   repository?: {
     url: string;
     stars?: string;
@@ -70,6 +99,11 @@ export const projects: Project[] = [
     description:
       "An inclusive intelligent job matching system connecting PWD job seekers with opportunities based on skills, experience, and accessibility requirements.",
     tech: ["PHP", "MySQL", "JavaScript", "NLP"],
+    guide: [
+      "Start with the job seeker's skills and experience.",
+      "Consider accessibility requirements alongside suitable opportunities.",
+      "Explore how those factors shape the matching process.",
+    ],
   },
   {
     title: "Hitovest",
@@ -79,6 +113,11 @@ export const projects: Project[] = [
     description:
       "A catfish farming management system combining biomass forecasting, farm information, water quality monitoring, and production tools.",
     tech: ["Python", "Decision Tree", "Sensors"],
+    guide: [
+      "Review the farm information and water quality inputs.",
+      "Explore the biomass forecasting component.",
+      "See how monitoring and production data fit together.",
+    ],
   },
   {
     title: "Smart Irrigation System",
@@ -88,6 +127,11 @@ export const projects: Project[] = [
     description:
       "An automated irrigation solution using sensors and environmental monitoring to improve water management in agriculture.",
     tech: ["Arduino", "IoT", "C++"],
+    guide: [
+      "Look at the sensor and environmental readings.",
+      "Follow how those readings inform automated irrigation.",
+      "Consider the effect on water management.",
+    ],
   },
   {
     title: "Municipal Siniloan Website",
@@ -97,6 +141,11 @@ export const projects: Project[] = [
     description:
       "A responsive municipal website concept making local information, tourism, and community resources easier to access.",
     tech: ["React", "JavaScript", "CSS"],
+    guide: [
+      "Browse the local information sections.",
+      "Explore the tourism and community resources.",
+      "Check the layout at desktop and mobile sizes.",
+    ],
   },
   {
     title: "BAO Express",
@@ -106,6 +155,11 @@ export const projects: Project[] = [
     description:
       "An e-commerce interface concept focused on clear navigation, product discovery, and user-friendly authentication.",
     tech: ["HTML", "CSS", "JavaScript", "UI/UX"],
+    guide: [
+      "Start with the navigation and product discovery flow.",
+      "Review how products are presented to shoppers.",
+      "Explore the account access experience.",
+    ],
   },
   {
     title: "Attendance & Monitoring",
@@ -115,5 +169,10 @@ export const projects: Project[] = [
     description:
       "An information system concept for recording, organizing, and monitoring attendance data.",
     tech: ["PHP", "MySQL", "Bootstrap"],
+    guide: [
+      "Follow how attendance is recorded.",
+      "Review how records are organized.",
+      "Explore the monitoring view of attendance data.",
+    ],
   },
 ];
