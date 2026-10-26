@@ -186,7 +186,7 @@ export default function App() {
           {profile.status}
         </a>
       </header>
-      <main id="main" tabIndex={-1}>
+      <main id="main" className={page === "home" ? "home-main" : undefined} tabIndex={-1}>
         {page === "home" ? (
           <section className="home-layout">
             <div className="intro">

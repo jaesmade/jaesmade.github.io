@@ -40,6 +40,7 @@
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
+  --content-width: 1120px;
   --page-gutter: clamp(20px, 4vw, 96px);
   --section-space: clamp(40px, 6vw, 72px);
   color-scheme: light;
@@ -79,6 +80,10 @@ main {
   display: flow-root;
   flex: 1;
   min-width: 0;
+}
+.home-main {
+  display: flex;
+  align-items: center;
 }
 a {
   color: inherit;
@@ -133,7 +138,7 @@ svg {
   width: 100%;
   flex-shrink: 0;
   padding: var(--space-8) var(--page-gutter);
-  margin: auto;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -160,15 +165,15 @@ svg {
   background: var(--status);
 }
 .home-layout {
-  margin: var(--space-8) auto var(--section-space);
+  margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(48px, 6vw, 160px);
+  gap: clamp(40px, 4vw, 56px);
   align-items: start;
-  padding: 0 var(--page-gutter);
+  padding: clamp(48px, 4vw, 64px) var(--page-gutter);
 }
 .intro h1 {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-4);
 }
 .name-highlight {
   position: relative;
@@ -192,7 +197,10 @@ svg {
 .intro-copy {
   font-size: 16px;
   max-width: 455px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
+}
+.intro > .divider {
+  margin: var(--space-6) 0;
 }
 .divider {
   display: flex;
@@ -209,7 +217,7 @@ svg {
 .card-nav {
   display: grid;
   gap: var(--space-4);
-  align-self: center;
+  align-self: start;
 }
 .nav-card {
   display: flex;
@@ -278,6 +286,7 @@ svg {
 }
 footer {
   width: calc(100% - 2 * var(--page-gutter));
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: var(--space-6) 0 calc(112px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
@@ -332,6 +341,12 @@ footer {
 .inner-page {
   margin: var(--space-8) auto var(--section-space);
   padding: 0 var(--page-gutter);
+}
+.site-header,
+.home-layout,
+.inner-page {
+  width: 100%;
+  max-width: calc(var(--content-width) + 2 * var(--page-gutter));
 }
 .back-link {
   display: inline-block;
@@ -799,7 +814,6 @@ a { text-underline-offset: 4px; }
 }
 @media (max-width: 1000px) {
   h1 { font-size: 34px; }
-  .home-layout { gap: var(--space-12); }
   .social-row > span { flex-basis: 100%; }
 }
 @media (max-width: 820px) {
@@ -812,7 +826,8 @@ a { text-underline-offset: 4px; }
   .site-header { padding-block: var(--space-5); flex-wrap: wrap; gap: var(--space-3); }
   .wordmark { font-size: 12px; }
   .availability { font-size: 10px; padding: var(--space-2) var(--space-3); }
-  .home-layout, .inner-page { margin-top: var(--space-8); }
+  .home-layout { padding-block: var(--space-8); }
+  .inner-page { margin-top: var(--space-8); }
   .intro h1 { font-size: clamp(28px, 8vw, 38px); }
   .wave { font-size: 44px; margin-left: var(--space-4); }
   .nav-card { padding: var(--space-4); gap: var(--space-3); }
