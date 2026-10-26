@@ -210,7 +210,7 @@ export default function App() {
                     rel="noreferrer"
                   >
                     <SocialIcon name={s.label} />
-                    {s.label} <span aria-hidden="true">↗</span>
+                    {s.label}
                   </a>
                 ))}
               </div>
@@ -437,7 +437,7 @@ export default function App() {
                       rel="noreferrer"
                     >
                       <SocialIcon name={s.label} />
-                      {s.label} <span aria-hidden="true">↗</span>
+                      {s.label}
                     </a>
                   ))}
                 </div>
