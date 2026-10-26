@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <script>
       try {
-        if (localStorage.getItem("cv-theme") === "light") {
-          document.documentElement.dataset.theme = "light";
+        if (localStorage.getItem("cv-console-theme") === "dark") {
+          document.documentElement.dataset.theme = "dark";
         }
       } catch {
-        // The dark default works even when storage is unavailable.
+        // The approved LCD palette works even when storage is unavailable.
       }
     </script>
     <link rel="icon" type="image/svg+xml" href="./port.svg" />

@@ -24,6 +24,7 @@ import powershell from "../assets/toolbox/color/powershell.svg";
 import playwright from "../assets/toolbox/color/playwright.svg";
 import selenium from "../assets/toolbox/color/selenium.svg";
 import nmap from "../assets/toolbox/nmap.svg";
+import n8n from "../assets/toolbox/n8n.svg";
 
 const brandIcons: Record<string, string> = {
   HTML: html,
@@ -45,6 +46,7 @@ const brandIcons: Record<string, string> = {
   Playwright: playwright,
   Selenium: selenium,
   Nmap: nmap,
+  n8n,
   PHP: php,
   Python: python,
   MySQL: mysql,

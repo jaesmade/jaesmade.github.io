@@ -2,6 +2,8 @@ Brand SVGs from [Simple Icons](https://github.com/simple-icons/simple-icons/tree
 
 The original monochrome SVG files are retained, along with the upstream CC0 license.
 
+`n8n.svg` uses the n8n artwork from the same Simple Icons commit, filled with the brand pink (`#EA4B71`) for the toolbox.
+
 The full-color SVGs in `color/` come from [Devicon v2.17.0](https://github.com/devicons/devicon/tree/v2.17.0/icons), using each technology's `*-original.svg` artwork. Their upstream MIT license is retained in `LICENSE-DEVICON`. The toolbox renders these local SVGs as images to preserve their original colors. The navy pandas mark has a light backing for visibility in both themes; MySQL and Electron are brightened in the dark theme.
 
 `powershell.svg` is the plain PowerShell icon from [Devicon v2.17.0](https://github.com/devicons/devicon/blob/v2.17.0/icons/powershell/powershell-plain.svg). Its upstream MIT license is retained in `LICENSE-DEVICON`.

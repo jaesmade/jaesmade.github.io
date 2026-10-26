@@ -55,6 +55,7 @@ export const profile = {
     "MongoDB",
     "SQLite",
     "Redis",
+    "n8n",
     "Playwright",
     "Selenium",
     "Vite",

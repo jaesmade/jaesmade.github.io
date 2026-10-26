@@ -4,6 +4,12 @@ import ToolboxIcon from "./components/ToolboxIcon";
 import "./index.css";
 const pages = ["home", "about", "portfolio", "contact"] as const;
 type Page = (typeof pages)[number];
+const pageLabels: Record<Page, string> = {
+  home: "Home",
+  about: "About",
+  portfolio: "Projects",
+  contact: "Contact",
+};
 const getPage = (): Page => {
   const hash = location.hash.slice(1);
   if (hash === "resume") return "about";
@@ -20,7 +26,6 @@ function Icon({ name }: { name: string }) {
     close: "M5 5l14 14M19 5 5 19",
     sun: "M12 1v2m0 18v2M1 12h2m18 0h2M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z",
     moon: "M21 13A9 9 0 0 1 11 3a9 9 0 1 0 10 10Z",
-    arrow: "M5 19 19 5M5 5h14v14",
     star: "m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3L10 14.2 5 9.3l6.9-1Z",
     fork: "M6 3v4a3 3 0 0 0 3 3h7a3 3 0 0 1 3 3v4M6 17v4M3 4a3 3 0 1 0 6 0 3 3 0 0 0-6 0ZM16 18a3 3 0 1 0 6 0 3 3 0 0 0-6 0ZM3 19a3 3 0 1 0 6 0 3 3 0 0 0-6 0Z",
   };
@@ -32,11 +37,11 @@ function Icon({ name }: { name: string }) {
       fill="none"
       stroke="currentColor"
       strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      strokeLinecap="square"
+      strokeLinejoin="miter"
       aria-hidden="true"
     >
-      <path d={paths[name] || paths.arrow} />
+      <path d={paths[name]} />
     </svg>
   );
 }
@@ -110,8 +115,8 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
           >
             <Icon name="close" />
           </button>
-          <span className="project-dialog-category">{project.category}</span>
           <h2 id="project-dialog-title">{project.title}</h2>
+          <span className="project-dialog-category">{project.category}</span>
         </header>
         <div className="project-dialog-media">
           <ProjectImage project={project} loading="eager" />
@@ -135,7 +140,7 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
           </section>
           {project.repository && (
             <a className="primary-button project-repository" href={project.repository.url} target="_blank" rel="noreferrer">
-              View on GitHub <Icon name="arrow" />
+              View on GitHub
             </a>
           )}
         </div>
@@ -145,11 +150,12 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
 }
 export default function App() {
   const [page, setPage] = useState<Page>(getPage);
+  const [activeHomeItem, setActiveHomeItem] = useState("about");
   const [filter, setFilter] = useState("All");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [theme, setTheme] = useState(() => {
-    return document.documentElement.dataset.theme === "light" ? "light" : "dark";
+    return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
   });
   useEffect(() => {
     const update = () => {
@@ -164,7 +170,7 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     try {
-      localStorage.setItem("cv-theme", theme);
+      localStorage.setItem("cv-console-theme", theme);
     } catch {
       /* Optional storage. */
     }
@@ -177,275 +183,324 @@ export default function App() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="site-header">
-        <a className="wordmark" href="#home">
-          {profile.handle}
-        </a>
-        <a className="availability" href="#contact">
-          <i />
-          {profile.status}
-        </a>
-      </header>
-      <main id="main" className={page === "home" ? "home-main" : undefined} tabIndex={-1}>
-        {page === "home" ? (
-          <section className="home-layout">
-            <div className="intro">
-              <h1>
-                Hey, I'm
-                <br />
-                <span className="name-highlight">{profile.firstName}.</span>
-                <span className="wave" aria-hidden="true">
-                  ✌
-                </span>
-              </h1>
-              <p className="intro-copy">{profile.intro}</p>
-              <Divider />
-              <div className="social-row">
-                <span>FIND ME ELSEWHERE</span>
-                {profile.socials.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <SocialIcon name={s.label} />
-                    {s.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-            <nav className="card-nav" aria-label="Explore portfolio">
-                {[
-                  {
-                    id: "about",
-                    title: "About me",
-                    color: "tone-warm",
-                  },
-                  {
-                    id: "portfolio",
-                    title: "My projects",
-                    color: "tone-cool",
-                  },
-                  {
-                    id: "contact",
-                    title: "Contact",
-                    color: "tone-soft",
-                  },
-                ].map((item) => (
-                  <a
-                    className={`nav-card ${item.color}`}
-                    href={`#${item.id}`}
-                    key={item.id}
-                  >
-                    <span className="card-icon">
-                      <Icon name={item.id} />
-                    </span>
-                    <span>
-                      <strong>{item.title}</strong>
-                    </span>
-                    <Icon name="arrow" />
-                  </a>
-                ))}
-            </nav>
-          </section>
-        ) : (
-          <section className="inner-page" key={page}>
-            <a className="back-link" href="#home">
-              ← Back to home
+      <div className={`console-shell${page === "home" ? " console-shell-home" : ""}`}>
+        <span className="shell-screw screw-tl" aria-hidden="true" />
+        <span className="shell-screw screw-tr" aria-hidden="true" />
+        <span className="shell-screw screw-bl" aria-hidden="true" />
+        <span className="shell-screw screw-br" aria-hidden="true" />
+        <header className="console-topbar">
+          <a className="console-title" href="#home" aria-label={`${profile.firstName}'s CV — home`}>
+            {profile.firstName.toUpperCase()}.CV
+          </a>
+          <a className="availability" href="#contact">
+            <i aria-hidden="true" />
+            {profile.status}
+          </a>
+        </header>
+        <div className="console-screen">
+          <div className="site-header">
+            <a className="wordmark" href="#home">
+              {profile.handle}
             </a>
-            <h1>
-              {
-                {
-                  about: "About me",
-                  portfolio: "Projects",
-                  contact: "Contact",
-                  home: "",
-                }[page]
-              }
-            </h1>
-            <Divider />
-            {page === "about" && (
-              <>
-                <div className="about-grid">
-                  <div>
-                    <h2>{profile.name}</h2>
-                    {profile.about.map((p) => (
-                      <p key={p}>{p}</p>
-                    ))}
-                    <div className="about-actions">
+          </div>
+          <main id="main" className={page === "home" ? "home-main" : undefined} tabIndex={-1}>
+            {page === "home" ? (
+              <section className="home-layout">
+                <div className="intro">
+                  <h1>
+                    Hey, I'm
+                    <br />
+                    <span className="name-highlight">{profile.firstName}.</span>
+                    <span className="wave" aria-hidden="true">
+                      ✌
+                    </span>
+                  </h1>
+                  <p className="intro-copy">{profile.intro}</p>
+                  <Divider />
+                  <div className="social-row">
+                    <span>FIND ME ELSEWHERE</span>
+                    {profile.socials.map((s) => (
                       <a
-                        className="primary-button"
-                        href={`${import.meta.env.BASE_URL}Josh-Andrew-Esmade-Resume.pdf`}
-                        download="Josh-Andrew-Esmade-Resume.pdf"
+                        key={s.label}
+                        href={s.url}
+                        target="_blank"
+                        rel="noreferrer"
                       >
-                        <Icon name="resume" />
-                        Download résumé (PDF)
+                        <SocialIcon name={s.label} />
+                        {s.label}
                       </a>
-                      <a className="text-link" href="#portfolio">
-                        Explore my projects ↗
+                    ))}
+                  </div>
+                </div>
+                <nav className="card-nav" aria-label="Explore portfolio">
+                    {[
+                      {
+                        id: "about",
+                        title: "About me",
+                        color: "tone-warm",
+                      },
+                      {
+                        id: "portfolio",
+                        title: "My projects",
+                        color: "tone-cool",
+                      },
+                      {
+                        id: "contact",
+                        title: "Contact",
+                        color: "tone-soft",
+                      },
+                    ].map((item) => (
+                      <a
+                        className={`nav-card ${item.color}${activeHomeItem === item.id ? " is-selected" : ""}`}
+                        href={`#${item.id}`}
+                        key={item.id}
+                        onPointerEnter={() => setActiveHomeItem(item.id)}
+                        onFocus={() => setActiveHomeItem(item.id)}
+                      >
+                        <span className="card-icon">
+                          <Icon name={item.id} />
+                        </span>
+                        <span>
+                          <strong>{item.title}</strong>
+                        </span>
                       </a>
+                    ))}
+                </nav>
+              </section>
+            ) : (
+              <section className="inner-page" key={page}>
+                <a className="back-link" href="#home">
+                  Back to home
+                </a>
+                <h1>
+                  {
+                    {
+                      about: "About me",
+                      portfolio: "Projects",
+                      contact: "Contact",
+                      home: "",
+                    }[page]
+                  }
+                </h1>
+                <Divider />
+                {page === "about" && (
+                  <>
+                    <div className="about-grid">
+                      <div>
+                        <h2>{profile.name}</h2>
+                        {profile.about.map((p) => (
+                          <p key={p}>{p}</p>
+                        ))}
+                        <div className="about-actions">
+                          <a className="text-link" href="#portfolio">
+                            Explore my projects
+                          </a>
+                        </div>
+                      </div>
+                      <div className="about-profile">
+                        <img
+                          className="about-photo"
+                          src={profile.photo}
+                          alt={`Portrait of ${profile.name}`}
+                          width="1112"
+                          height="1414"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <a
+                          className="nav-card resume-download"
+                          href={`${import.meta.env.BASE_URL}Josh-Andrew-Esmade-Resume.pdf`}
+                          download="Josh-Andrew-Esmade-Resume.pdf"
+                        >
+                          <span className="card-icon"><Icon name="resume" /></span>
+                          <span className="resume-download-copy">
+                            <strong>Download résumé</strong>
+                            <small>(PDF)</small>
+                          </span>
+                        </a>
+                      </div>
+                    </div>
+                    <h2 className="section-heading">My toolbox</h2>
+                    <div className="skills">
+                      {profile.skills.map((s, i) => (
+                        <span
+                          className={["tone-warm", "tone-cool", "tone-soft"][i % 3]}
+                          key={s}
+                        >
+                          <ToolboxIcon name={s} />
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                    <section className="certificate-section" aria-labelledby="certificates-heading">
+                      <h2 id="certificates-heading">Certificates</h2>
+                      <p className="certificate-intro">Courses, training, and professional credentials.</p>
+                      {profile.certificates.length > 0 ? (
+                        <ul className="certificate-list">
+                          {profile.certificates.map((certificate) => (
+                            <li className="certificate-item" key={certificate.id}>
+                              <span className="certificate-icon"><Icon name="certificate" /></span>
+                              <div className="certificate-details">
+                                <h3>{certificate.title}</h3>
+                                <div className="certificate-meta">
+                                  <span>{certificate.issuer}</span>
+                                  {certificate.issued && <span>{certificate.issued}</span>}
+                                </div>
+                              </div>
+                              {(certificate.file || certificate.credentialUrl) && (
+                                <div className="certificate-actions">
+                                  {certificate.file && (
+                                    <a
+                                      className="certificate-link"
+                                      href={`${import.meta.env.BASE_URL}${certificate.file}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      aria-label={`View certificate: ${certificate.title} (opens in a new tab)`}
+                                    >
+                                      View certificate
+                                    </a>
+                                  )}
+                                  {certificate.credentialUrl && (
+                                    <a
+                                      className="certificate-link"
+                                      href={certificate.credentialUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      aria-label={`Verify credential: ${certificate.title} (opens in a new tab)`}
+                                    >
+                                      Verify credential
+                                    </a>
+                                  )}
+                                </div>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div className="certificates-empty">
+                          <span className="certificate-icon"><Icon name="certificate" /></span>
+                          <p>Certificates will appear here as I add them.</p>
+                        </div>
+                      )}
+                    </section>
+                  </>
+                )}
+                {page === "portfolio" && (
+                  <>
+                    <p>A selection of applications, experiments, and systems.</p>
+                    <div className="filters" aria-label="Filter projects">
+                      {["All", "Web", "AI / Data", "Systems"].map((f) => (
+                        <button
+                          aria-pressed={filter === f}
+                          className={filter === f ? "selected" : ""}
+                          onClick={() => {
+                            setFilter(f);
+                          }}
+                          key={f}
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="project-grid">
+                      {projects
+                        .filter((p) => filter === "All" || p.category === filter)
+                        .map((p) => (
+                          <article className="project-card" key={p.title}>
+                            <button
+                              className="project-art"
+                              type="button"
+                              aria-haspopup="dialog"
+                              aria-label={`View details for ${p.title}`}
+                              onClick={(event) => {
+                                projectTriggerRef.current = event.currentTarget;
+                                setSelectedProject(p);
+                              }}
+                            >
+                              <ProjectImage project={p} />
+                              {(p.repository?.stars || p.repository?.forks) && (
+                                <span className="repo-stats">
+                                  {p.repository.stars && (
+                                    <span title="GitHub stars"><Icon name="star" />{p.repository.stars}</span>
+                                  )}
+                                  {p.repository.forks && (
+                                    <span title="GitHub forks"><Icon name="fork" />{p.repository.forks}</span>
+                                  )}
+                                </span>
+                              )}
+                              <span className="project-overlay">
+                                <span className="project-overlay-inner">
+                                  <small className="project-category">{p.category}</small>
+                                  <strong>{p.title}</strong>
+                                  <span className="project-description">{p.description}</span>
+                                  <span className="project-overlay-action">View details</span>
+                                </span>
+                              </span>
+                            </button>
+                          </article>
+                        ))}
+                    </div>
+                  </>
+                )}
+                {page === "contact" && (
+                  <div className="contact-panel">
+                    <p>
+                      Email me about projects or job opportunities.
+                    </p>
+                    <a className="primary-button" href={`mailto:${profile.email}`}>
+                      <Icon name="contact" />
+                      {profile.email}
+                    </a>
+                    <div className="contact-socials">
+                      {profile.socials.map((s) => (
+                        <a
+                          href={s.url}
+                          key={s.label}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <SocialIcon name={s.label} />
+                          {s.label}
+                        </a>
+                      ))}
                     </div>
                   </div>
-                  <img
-                    className="about-photo"
-                    src={profile.photo}
-                    alt={`Portrait of ${profile.name}`}
-                    width="1112"
-                    height="1414"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <h2 className="section-heading">My toolbox</h2>
-                <div className="skills">
-                  {profile.skills.map((s, i) => (
-                    <span
-                      className={["tone-warm", "tone-cool", "tone-soft"][i % 3]}
-                      key={s}
-                    >
-                      <ToolboxIcon name={s} />
-                      {s}
-                    </span>
-                  ))}
-                </div>
-                <section className="certificate-section" aria-labelledby="certificates-heading">
-                  <h2 id="certificates-heading">Certificates</h2>
-                  <p className="certificate-intro">Courses, training, and professional credentials.</p>
-                  {profile.certificates.length > 0 ? (
-                    <ul className="certificate-list">
-                      {profile.certificates.map((certificate) => (
-                        <li className="certificate-item" key={certificate.id}>
-                          <span className="certificate-icon"><Icon name="certificate" /></span>
-                          <div className="certificate-details">
-                            <h3>{certificate.title}</h3>
-                            <div className="certificate-meta">
-                              <span>{certificate.issuer}</span>
-                              {certificate.issued && <span>{certificate.issued}</span>}
-                            </div>
-                          </div>
-                          {(certificate.file || certificate.credentialUrl) && (
-                            <div className="certificate-actions">
-                              {certificate.file && (
-                                <a
-                                  className="certificate-link"
-                                  href={`${import.meta.env.BASE_URL}${certificate.file}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  aria-label={`View certificate: ${certificate.title} (opens in a new tab)`}
-                                >
-                                  View certificate <Icon name="arrow" />
-                                </a>
-                              )}
-                              {certificate.credentialUrl && (
-                                <a
-                                  className="certificate-link"
-                                  href={certificate.credentialUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  aria-label={`Verify credential: ${certificate.title} (opens in a new tab)`}
-                                >
-                                  Verify credential <Icon name="arrow" />
-                                </a>
-                              )}
-                            </div>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="certificates-empty">
-                      <span className="certificate-icon"><Icon name="certificate" /></span>
-                      <p>Certificates will appear here as I add them.</p>
-                    </div>
-                  )}
-                </section>
-              </>
+                )}
+              </section>
             )}
-            {page === "portfolio" && (
-              <>
-                <p>A selection of applications, experiments, and systems.</p>
-                <div className="filters" aria-label="Filter projects">
-                  {["All", "Web", "AI / Data", "Systems"].map((f) => (
-                    <button
-                      aria-pressed={filter === f}
-                      className={filter === f ? "selected" : ""}
-                      onClick={() => {
-                        setFilter(f);
-                      }}
-                      key={f}
-                    >
-                      {f}
-                    </button>
-                  ))}
-                </div>
-                <div className="project-grid">
-                  {projects
-                    .filter((p) => filter === "All" || p.category === filter)
-                    .map((p) => (
-                      <article className="project-card" key={p.title}>
-                        <button
-                          className="project-art"
-                          type="button"
-                          aria-haspopup="dialog"
-                          aria-label={`View details for ${p.title}`}
-                          onClick={(event) => {
-                            projectTriggerRef.current = event.currentTarget;
-                            setSelectedProject(p);
-                          }}
-                        >
-                          <ProjectImage project={p} />
-                          {(p.repository?.stars || p.repository?.forks) && (
-                            <span className="repo-stats">
-                              {p.repository.stars && (
-                                <span title="GitHub stars"><Icon name="star" />{p.repository.stars}</span>
-                              )}
-                              {p.repository.forks && (
-                                <span title="GitHub forks"><Icon name="fork" />{p.repository.forks}</span>
-                              )}
-                            </span>
-                          )}
-                          <span className="project-overlay">
-                            <span className="project-overlay-inner">
-                              <small className="project-category">{p.category}</small>
-                              <strong>{p.title}</strong>
-                              <span className="project-description">{p.description}</span>
-                              <span className="project-overlay-action">View details ↗</span>
-                            </span>
-                          </span>
-                        </button>
-                      </article>
-                    ))}
-                </div>
-              </>
-            )}
-            {page === "contact" && (
-              <div className="contact-panel">
-                <p>
-                  Email me about projects or job opportunities.
-                </p>
-                <a className="primary-button" href={`mailto:${profile.email}`}>
-                  <Icon name="contact" />
-                  {profile.email} ↗
+          </main>
+          <footer className="console-footer">
+            <span className="console-copyright">
+              © {new Date().getFullYear()} {profile.name}
+            </span>
+            <nav className="dock" aria-label="Main navigation">
+              {pages.map((p) => (
+                <a
+                  key={p}
+                  href={`#${p}`}
+                  className={page === p ? "active" : ""}
+                  aria-label={pageLabels[p]}
+                  aria-current={page === p ? "page" : undefined}
+                  title={pageLabels[p]}
+                >
+                  <Icon name={p} />
+                  <span className="dock-label">{pageLabels[p]}</span>
                 </a>
-                <div className="contact-socials">
-                  {profile.socials.map((s) => (
-                    <a
-                      href={s.url}
-                      key={s.label}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <SocialIcon name={s.label} />
-                      {s.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-      </main>
+              ))}
+              <span className="dock-separator" />
+              <button
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+                title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+                type="button"
+              >
+                <Icon name={theme === "light" ? "moon" : "sun"} />
+                <span className="dock-label">{theme === "light" ? "Dark" : "Light"}</span>
+              </button>
+            </nav>
+          </footer>
+        </div>
+      </div>
       <ProjectDialog
         project={selectedProject}
         onClose={() => {
@@ -455,33 +510,6 @@ export default function App() {
           });
         }}
       />
-      <footer>
-        <span>
-          © {new Date().getFullYear()} {profile.name}
-        </span>
-      </footer>
-      <nav className="dock" aria-label="Main navigation">
-        {pages.map((p) => (
-          <a
-            key={p}
-            href={`#${p}`}
-            className={page === p ? "active" : ""}
-            aria-label={p.charAt(0).toUpperCase() + p.slice(1)}
-            aria-current={page === p ? "page" : undefined}
-            title={p.charAt(0).toUpperCase() + p.slice(1)}
-          >
-            <Icon name={p} />
-          </a>
-        ))}
-        <span className="dock-separator" />
-        <button
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
-          title="Toggle theme"
-        >
-          <Icon name={theme === "light" ? "moon" : "sun"} />
-        </button>
-      </nav>
     </>
   );
 }
