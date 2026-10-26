@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, type CSSProperties } from "react";
 import { profile, projects, type Project } from "./data/portfolio";
 import ToolboxIcon from "./components/ToolboxIcon";
 import "./index.css";
@@ -9,6 +9,15 @@ const pageLabels: Record<Page, string> = {
   about: "About",
   portfolio: "Projects",
   contact: "Contact",
+};
+const projectCategories = ["All", "Web", "AI / Data", "Systems"] as const;
+const projectIcons: Record<string, string> = {
+  SkillDis: "people",
+  Hitovest: "chart",
+  "Smart Irrigation System": "leaf",
+  "Municipal Siniloan Website": "web",
+  "BAO Express": "cart",
+  "Attendance & Monitoring": "people",
 };
 const getPage = (): Page => {
   const hash = location.hash.slice(1);
@@ -26,6 +35,11 @@ function Icon({ name }: { name: string }) {
     close: "M5 5l14 14M19 5 5 19",
     sun: "M12 1v2m0 18v2M1 12h2m18 0h2M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z",
     moon: "M21 13A9 9 0 0 1 11 3a9 9 0 1 0 10 10Z",
+    people: "M14 21v-2a4 4 0 0 0-8 0v2M13 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM18 5a3 3 0 0 1 0 6M18 15a4 4 0 0 1 4 4v2",
+    chart: "M3 21h18M5 17v-5h3v5M11 17V8h3v9M17 17V3h3v14",
+    leaf: "M20 4C10 3 3 8 4 15c1 6 10 7 14 0 2-4 2-8 2-11ZM5 20 16 9",
+    web: "M3 4h18v16H3ZM3 9h18M7 6.5h.01M11 6.5h.01",
+    cart: "M2 3h3l3 13h11l3-9H6M9 20h.01M18 20h.01",
     star: "m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3L10 14.2 5 9.3l6.9-1Z",
     fork: "M6 3v4a3 3 0 0 0 3 3h7a3 3 0 0 1 3 3v4M6 17v4M3 4a3 3 0 1 0 6 0 3 3 0 0 0-6 0ZM16 18a3 3 0 1 0 6 0 3 3 0 0 0-6 0ZM3 19a3 3 0 1 0 6 0 3 3 0 0 0-6 0Z",
   };
@@ -148,15 +162,60 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
     </dialog>
   );
 }
+function ProjectPreview({ project, onOpen }: {
+  project: Project;
+  onOpen: (project: Project, trigger: HTMLButtonElement) => void;
+}) {
+  return (
+    <section className="project-preview" id="project-preview" aria-labelledby="project-preview-title">
+      <div className="project-preview-heading">
+        <span className="project-preview-icon"><Icon name={projectIcons[project.title] || "portfolio"} /></span>
+        <div>
+          <h2 id="project-preview-title">{project.title}</h2>
+          <p className="project-preview-category">{project.category}</p>
+        </div>
+      </div>
+      <p className="project-preview-description">{project.description}</p>
+      <div className="project-preview-tech">
+        <h3>Tech stack</h3>
+        <ul className="project-tech-list">
+          {project.tech.map((technology) => <li key={technology}>{technology}</li>)}
+        </ul>
+      </div>
+      {(project.repository?.stars || project.repository?.forks) && (
+        <div className="project-preview-stats">
+          {project.repository.stars && <span><Icon name="star" />{project.repository.stars} stars</span>}
+          {project.repository.forks && <span><Icon name="fork" />{project.repository.forks} forks</span>}
+        </div>
+      )}
+      <button
+        className="nav-card project-details-action"
+        type="button"
+        aria-haspopup="dialog"
+        aria-label={`View details for ${project.title}`}
+        onClick={(event) => onOpen(project, event.currentTarget)}
+      >
+        <strong>View details</strong>
+      </button>
+    </section>
+  );
+}
 export default function App() {
   const [page, setPage] = useState<Page>(getPage);
   const [activeHomeItem, setActiveHomeItem] = useState("about");
   const [filter, setFilter] = useState("All");
+  const [activeProjectTitle, setActiveProjectTitle] = useState(projects[0]?.title ?? "");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [theme, setTheme] = useState(() => {
     return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
   });
+  const visibleProjects = projects.filter((project) => filter === "All" || project.category === filter);
+  const activeProject = visibleProjects.find((project) => project.title === activeProjectTitle) ?? visibleProjects[0];
+  const openProject = (project: Project, trigger: HTMLButtonElement) => {
+    projectTriggerRef.current = trigger;
+    setSelectedProject(project);
+  };
   useEffect(() => {
     const update = () => {
       if (location.hash === "#main") return;
@@ -268,20 +327,23 @@ export default function App() {
                 </nav>
               </section>
             ) : (
-              <section className="inner-page" key={page}>
+              <section className={`inner-page${page === "portfolio" ? " projects-page" : ""}`} key={page}>
                 <a className="back-link" href="#home">
                   Back to home
                 </a>
-                <h1>
-                  {
+                <div className={page === "portfolio" ? "projects-heading" : undefined}>
+                  <h1>
                     {
-                      about: "About me",
-                      portfolio: "Projects",
-                      contact: "Contact",
-                      home: "",
-                    }[page]
-                  }
-                </h1>
+                      {
+                        about: "About me",
+                        portfolio: "Projects",
+                        contact: "Contact",
+                        home: "",
+                      }[page]
+                    }
+                  </h1>
+                  {page === "portfolio" && <p>A selection of applications, experiments, and systems.</p>}
+                </div>
                 <Divider />
                 {page === "about" && (
                   <>
@@ -386,61 +448,48 @@ export default function App() {
                   </>
                 )}
                 {page === "portfolio" && (
-                  <>
-                    <p>A selection of applications, experiments, and systems.</p>
-                    <div className="filters" aria-label="Filter projects">
-                      {["All", "Web", "AI / Data", "Systems"].map((f) => (
+                  <div className="project-select">
+                    <div className="filters" role="group" aria-label="Filter projects">
+                      {projectCategories.map((category) => (
                         <button
-                          aria-pressed={filter === f}
-                          className={filter === f ? "selected" : ""}
+                          type="button"
+                          aria-pressed={filter === category}
+                          className={filter === category ? "selected" : ""}
                           onClick={() => {
-                            setFilter(f);
+                            setFilter(category);
+                            const matches = projects.filter((project) => category === "All" || project.category === category);
+                            if (!matches.some((project) => project.title === activeProjectTitle)) {
+                              setActiveProjectTitle(matches[0]?.title ?? "");
+                            }
                           }}
-                          key={f}
+                          key={category}
                         >
-                          {f}
+                          {category}
+                          <span className="filter-count">{category === "All" ? projects.length : projects.filter((project) => project.category === category).length}</span>
                         </button>
                       ))}
                     </div>
-                    <div className="project-grid">
-                      {projects
-                        .filter((p) => filter === "All" || p.category === filter)
-                        .map((p) => (
-                          <article className="project-card" key={p.title}>
-                            <button
-                              className="project-art"
-                              type="button"
-                              aria-haspopup="dialog"
-                              aria-label={`View details for ${p.title}`}
-                              onClick={(event) => {
-                                projectTriggerRef.current = event.currentTarget;
-                                setSelectedProject(p);
-                              }}
-                            >
-                              <ProjectImage project={p} />
-                              {(p.repository?.stars || p.repository?.forks) && (
-                                <span className="repo-stats">
-                                  {p.repository.stars && (
-                                    <span title="GitHub stars"><Icon name="star" />{p.repository.stars}</span>
-                                  )}
-                                  {p.repository.forks && (
-                                    <span title="GitHub forks"><Icon name="fork" />{p.repository.forks}</span>
-                                  )}
-                                </span>
-                              )}
-                              <span className="project-overlay">
-                                <span className="project-overlay-inner">
-                                  <small className="project-category">{p.category}</small>
-                                  <strong>{p.title}</strong>
-                                  <span className="project-description">{p.description}</span>
-                                  <span className="project-overlay-action">View details</span>
-                                </span>
-                              </span>
-                            </button>
-                          </article>
-                        ))}
+                    <div className="project-browser" role="group" aria-label="Choose a project" style={{ "--project-count": Math.max(visibleProjects.length, 1), "--project-span": visibleProjects.length + 1 } as CSSProperties}>
+                      {visibleProjects.map((project, index) => (
+                        <Fragment key={project.title}>
+                          <button
+                            className={`project-choice${activeProject === project ? " is-selected" : ""}`}
+                            type="button"
+                            aria-pressed={activeProject === project}
+                            aria-controls="project-preview"
+                            style={{ "--project-row": index + 1 } as CSSProperties}
+                            onClick={() => setActiveProjectTitle(project.title)}
+                          >
+                            <Icon name={projectIcons[project.title] || "portfolio"} />
+                            <span className="project-choice-title">{project.title}</span>
+                            <span className="project-choice-category">{project.category}</span>
+                          </button>
+                          {activeProject === project && <ProjectPreview project={project} onOpen={openProject} />}
+                        </Fragment>
+                      ))}
                     </div>
-                  </>
+                    {!activeProject && <p className="project-empty" role="status">No projects in this category.</p>}
+                  </div>
                 )}
                 {page === "contact" && (
                   <div className="contact-panel">
