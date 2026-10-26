@@ -15,6 +15,12 @@ npm run preview
 
 Upload the contents of `dist/` to any static host. Hash navigation (`#about`, `#portfolio`, `#contact`) works without server rewrite rules. Old `#resume` links open About, where visitors can download the résumé. Vite uses a relative base so the build also supports repository subpaths. Serve the site over HTTP; do not open index.html via file://.
 
+## GitHub Pages
+
+The portfolio is published at https://jaesmade.github.io/ from the `jaesmade/jaesmade.github.io` repository. Set **Settings → Pages → Source** to **GitHub Actions**.
+
+The repository-root workflow `.github/workflows/deploy.yml` installs the locked dependencies with Node.js 24, lints and builds `CV_front`, and deploys only `CV_front/dist`. Push changes under `CV_front/` to `main` to publish them, or run **Deploy portfolio to GitHub Pages** manually from the Actions tab. The `base: "./"` configuration supports the root site and hash navigation without additional routing rules.
+
 ## Personalize
 
 - `src/data/portfolio.ts`: name, introduction, About-page portrait, social links, skills, certificates, and projects. Current content preserves the original CV as an example.
