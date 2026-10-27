@@ -180,7 +180,7 @@ The main enclosure is full width up to (1400px), centered within fluid exterior 
 
 Spacing follows the source's four-pixel rhythm. Home's screen minimum height is `clamp(360px, 65dvh, 600px)`; short desktop viewports have a dedicated reduced-height arrangement. The footer stays in normal screen flow.
 
-At (1100px), footer navigation compresses. At (850px), home becomes one column, menu rows shorten, and the vertical column divider disappears. At (600px), the bezel becomes (10px), screen gutters become (14px), project and About grids become one column, filters use two columns, and the footer uses a two-column grid with a full-width theme control. At (360px), topbar wrapping and smaller labels preserve fit. Project cards otherwise use an auto-fill grid with a (310px) minimum.
+At (1100px), footer navigation compresses; below that width the shared project preview flows at full width immediately after the selected project row. The preview places image and summary side by side from (700px), stacking them at narrower widths. At (850px), home becomes one column, menu rows shorten, and the vertical column divider disappears. At (600px), the bezel becomes (10px), screen gutters become (14px), the About grid becomes one column, filters use two columns, and the footer uses a two-column grid with a full-width theme control. At (360px), topbar wrapping and smaller labels preserve fit. The desktop project selector uses a compact list beside a wider image-and-summary panel with a (32px) gutter; preview padding and major gaps are (24px), with (20px) between summary groups. Phones use (16px) preview padding and summary gaps.
 
 ## Elevation & Depth
 
@@ -200,15 +200,17 @@ Content cards, filters, skills, and primary actions use square corners and thin 
 
 Primary actions are flat rectangles using accent fill, inverse text, a matching two-pixel border, and a minimum height (48px). Hover switches to accent-hover. Global link and button focus uses a three-pixel outline with a five-pixel offset. Ordinary text links underline on hover and retain at least (44px) interaction height.
 
-The résumé download sits directly below the portrait, aligned to its full width. It reuses the home menu's stepped border, leading document icon, pixel label, and inverse hover/focus state, with a compact PDF label. It remains a native download link; the selection cursor is reserved for the homepage menu. Portrait and download share a compact column on mobile, and the download control is omitted in print.
+The About page uses the approved Player profile composition. A compact left column holds a square portrait in its original colors, role, location, availability, and résumé download. The portrait has no filters or blend effects in either theme. A one-pixel vertical rule separates it from the wider biography, introduction, education, and project action. The résumé uses the home menu's stepped border in its inverted state, leading document icon, pixel label, and compact PDF label. It remains a native download link; the selection cursor is reserved for the homepage menu. Below 600px, portrait and profile details sit side by side above the biography, with a horizontal divider replacing the vertical rule. The download control is omitted in print.
+
+The full-width About toolbox follows the GitHub profile's Tech Stack, with Frontend and Backend combined into Web. The other four ruled rows are Automation; Machine Learning, AI, & Data Tools; Databases; and Tools & Design. Each row has a narrow category column and wrapping icon-and-name entries, without individual tag borders. Below 600px, each category sits above its tools. Brand artwork is retained, with custom line symbols for tools without dedicated marks. Certificates appear below the toolbox only when real entries exist.
 
 ### Chips
 
-Skill labels are noninteractive outlined tags with inline toolbox marks and a minimum height (44px). Project technology tags use the cool LCD tone and a one-pixel rule. Category filters are buttons with surface fill; hover uses the cool tone and selected state uses accent inversion.
+Skill labels are noninteractive entries with inline toolbox marks. Project technology tags use the cool LCD tone and a subtle bottom rule. Category filters are transparent buttons with subtle bottom rules; hover uses the cool tone and selected state uses accent inversion. Secondary rules use `--line-soft`, mixing the theme's line color at 45% with its screen color.
 
 ### Cards / Containers
 
-Project cards have a two-pixel rule and a landscape image area (16:10). Hover or focus within reveals an ink-colored detail overlay; the image button's focus outline is inset. Touch surfaces show the overlay at rest and omit its longer description. Portrait framing uses a thin rule, surface fill, and a small inset.
+Project choices use subtle horizontal separators and an inverted selected row with a pixel cursor. The shared preview has a simple one-pixel secondary rule and surface fill, with title, a reserved 16:9 image area, description, technology tags, and a filled View details action. Images use contain sizing to retain the full artwork and update with selection; the current supplied assets are explicitly labeled screenshot placeholders. Console and main-menu stepped outlines remain the strongest framing. Portrait framing uses a thin rule, surface fill, and a small inset.
 
 ### Navigation
 
@@ -218,9 +220,11 @@ The footer consists of labeled inline SVG links inside the LCD, with accent inve
 
 ### Project dialog
 
-The native dialog uses a double ink rule, LCD background, sticky title bar, a (44px) close button, and a separate project-category metadata line. Desktop content is two columns; mobile becomes one column. The modal has constrained viewport height and scrolls its own content. Escape, close button, and backdrop dismissal restore the trigger focus in the application.
+The native dialog uses the approved File window composition: a single one-pixel frame and LCD background, a folder icon beside the wrapping pixel title and category, a (44px) close control, square Overview / Explore tabs, and a separate Close footer. A flex column keeps the header, tabs, and footer available while only the body scrolls; these are not sticky title bars. The dialog is at most (960px) wide with viewport clearance. Its body uses a stable height of `min(460px, 64dvh)`, a reserved scrollbar gutter, and contained overscroll.
 
-Reduced-motion preference removes animations, transitions, and smooth scrolling. Project overlays otherwise use (180ms) ease-out opacity and visibility transitions.
+Overview splits the contained (16:9) project artwork and concise description (55:45), with a fine vertical separator and a full-width technology row below. At (600px) and below, content stacks, the vertical separator disappears, and header/body padding reduces from (24px) to (16px). Explore uses readable explanation sections with a maximum width (68ch), regular Aldrich section headings (16px), and body text (15px) with line-height (1.75). Supplied repository and optional live-site destinations appear only inside Explore, above the explanation; omit the link group when neither exists. The removed What to explore section is not part of this component.
+
+Tabs invert the selected state, retain visible inward focus, and expose tab / tabpanel semantics with roving keyboard focus using Left / Right, Home, and End. Switching tabs starts the scrolling body at its top; reopening a project starts at Overview. Escape, header close, footer Close, and backdrop dismissal restore the trigger focus; the document behind the dialog is scroll locked. Keep the inherited theme tokens and diffuse modal shadow. Reduced-motion preference removes animations, transitions, and smooth scrolling.
 
 ## Do's and Don'ts
 

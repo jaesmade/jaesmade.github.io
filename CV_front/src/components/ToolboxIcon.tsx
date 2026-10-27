@@ -25,9 +25,15 @@ import playwright from "../assets/toolbox/color/playwright.svg";
 import selenium from "../assets/toolbox/color/selenium.svg";
 import nmap from "../assets/toolbox/nmap.svg";
 import n8n from "../assets/toolbox/n8n.svg";
+import express from "../assets/toolbox/color/express.svg";
+import dotnet from "../assets/toolbox/color/dotnet.svg";
+import github from "../assets/toolbox/color/github.svg";
+import vscode from "../assets/toolbox/color/vscode.svg";
+import openai from "../assets/toolbox/color/openai.svg";
 
 const brandIcons: Record<string, string> = {
   HTML: html,
+  HTML5: html,
   CSS: css,
   JavaScript: javascript,
   TypeScript: typescript,
@@ -54,10 +60,17 @@ const brandIcons: Record<string, string> = {
   Git: git,
   Figma: figma,
   Arduino: arduino,
+  "Arduino IDE": arduino,
+  Express: express,
+  "ASP.NET": dotnet,
+  GitHub: github,
+  "VS Code": vscode,
+  ChatGPT: openai,
 };
 
 const categoryPaths: Record<string, string> = {
   openpyxl: "M14 3H5v18h14V8ZM14 3v5h5M8 12h8M8 16h8M12 12v8",
+  xlrd: "M4 3h16v18H4ZM4 8h16M4 13h16M4 18h16M10 8v13M15 8v13",
   "Machine Learning": "M6 6l4 4M18 6l-4 4M10 14l-4 4M14 14l4 4M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6 4a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM22 4a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM6 20a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM22 20a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z",
   NLP: "M4 3h16v14H9l-5 4v-4H4ZM8 7h8M8 11h5",
   "UI/UX Design": "M3 3h18v18H3ZM3 8h18M8 8v13M12 12h5M12 16h3",

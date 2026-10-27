@@ -8,6 +8,10 @@ The full-color SVGs in `color/` come from [Devicon v2.17.0](https://github.com/d
 
 `powershell.svg` is the plain PowerShell icon from [Devicon v2.17.0](https://github.com/devicons/devicon/blob/v2.17.0/icons/powershell/powershell-plain.svg). Its upstream MIT license is retained in `LICENSE-DEVICON`.
 
+`color/express.svg`, `color/github.svg`, and `color/vscode.svg` use the corresponding original artwork from Devicon v2.17.0. `color/dotnet.svg` uses that version's `dotnetcore/dotnetcore-original.svg` mark for ASP.NET. Express and GitHub receive a light backing in the dark theme so their black artwork remains visible.
+
+`color/openai.svg` extracts the embedded OpenAI mark from the [ChatGPT badge in Josh's GitHub profile](https://github.com/jaesmade/jaesmade/blob/main/assets/badges/chatgpt.svg), using the badge's green (`#10A37F`) in place of white. The xlrd spreadsheet icon is a custom line symbol in `src/components/ToolboxIcon.tsx`.
+
 The openpyxl spreadsheet icon and the Machine Learning, NLP, and UI/UX Design icons are custom line symbols defined in `src/components/ToolboxIcon.tsx`, not official brand logos. Their colors adapt to the site's light and dark themes.
 
 `nmap.svg` retains the eye artwork from the [official Nmap logo](https://nmap.org/images/nmap-logo-64px.svg), with the wordmark and unused pattern omitted and the eye centered in its viewBox. It is rendered in its original colors. Nmap artwork is separate from the Simple Icons CC0 assets; credit belongs to the Nmap Project.

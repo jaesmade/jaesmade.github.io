@@ -10,14 +10,12 @@ const pageLabels: Record<Page, string> = {
   portfolio: "Projects",
   contact: "Contact",
 };
-const projectCategories = ["All", "Web", "AI / Data", "Systems"] as const;
+const projectCategories = ["All", "Web", "AI / Data", "Systems"].filter(
+  (category) => category === "All" || projects.some((project) => project.category === category),
+);
 const projectIcons: Record<string, string> = {
   SkillDis: "people",
-  Hitovest: "chart",
-  "Smart Irrigation System": "leaf",
   "Municipal Siniloan Website": "web",
-  "BAO Express": "cart",
-  "Attendance & Monitoring": "people",
 };
 const getPage = (): Page => {
   const hash = location.hash.slice(1);
@@ -27,8 +25,15 @@ const getPage = (): Page => {
 function Icon({ name }: { name: string }) {
   const paths: Record<string, string> = {
     home: "m3 10 9-7 9 7v11h-6v-7H9v7H3Z",
+    back: "M20 12H4m7-7-7 7 7 7",
+    previous: "m15 5-7 7 7 7",
+    next: "m9 5 7 7-7 7",
     about: "M20 21v-2a7 7 0 0 0-14 0v2M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z",
+    location: "M19 10c0 5-7 12-7 12S5 15 5 10a7 7 0 1 1 14 0ZM15 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z",
+    status: "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM8 12l3 3 5-6",
+    education: "m2 8 10-5 10 5-10 5ZM6 10v7c4 3 8 3 12 0v-7M22 8v9",
     portfolio: "M3 7h18v14H3ZM8 7V3h8v4M3 12h18M10 12v3h4v-3",
+    folder: "M3 5h5V4h4v2h9v14H3ZM3 9h18",
     resume: "M14 2H5v20h14V7ZM14 2v6h5M8 12h8M8 16h8",
     certificate: "M4 3h16v14H4ZM8 7h8M8 11h3M14 15l-2 7 4-2 4 2-2-7M19 13a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z",
     contact: "M3 5h18v14H3ZM3 5l9 8 9-8",
@@ -74,7 +79,12 @@ function SocialIcon({ name }: { name: string }) {
 function Divider() {
   return <div className="divider" aria-hidden="true" />;
 }
-function ProjectImage({ project, loading = "lazy" }: { project: Project; loading?: "lazy" | "eager" }) {
+function ProjectIcon({ project }: { project: Project }) {
+  return project.icon
+    ? <img className="project-brand-icon" src={`${import.meta.env.BASE_URL}${project.icon}`} width="32" height="32" alt="" aria-hidden="true" />
+    : <Icon name={projectIcons[project.title] || "portfolio"} />;
+}
+function ProjectImage({ project, loading = "lazy" }: { project: Pick<Project, "title" | "image" | "imageAlt">; loading?: "lazy" | "eager" }) {
   return (
     <img
       src={`${import.meta.env.BASE_URL}${project.image}`}
@@ -93,8 +103,65 @@ function ProjectImage({ project, loading = "lazy" }: { project: Project; loading
     />
   );
 }
+function ProjectGallery({ project }: { project: Project }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const screenshots = project.screenshots;
+  if (!screenshots?.length) {
+    return <div className="project-dialog-media"><ProjectImage project={project} loading="eager" /></div>;
+  }
+  const current = screenshots[activeIndex];
+  const move = (step: number) => setActiveIndex((index) => (index + step + screenshots.length) % screenshots.length);
+  return (
+    <div
+      className="project-gallery"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={`${project.title} screenshots`}
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowLeft") move(-1);
+        else if (event.key === "ArrowRight") move(1);
+        else if (event.key === "Home") setActiveIndex(0);
+        else if (event.key === "End") setActiveIndex(screenshots.length - 1);
+        else return;
+        event.preventDefault();
+        event.stopPropagation();
+      }}
+    >
+      <div
+        className="project-dialog-media"
+        onTouchStart={(event) => {
+          const touch = event.touches[0];
+          touchStart.current = event.touches.length === 1 ? { x: touch.clientX, y: touch.clientY } : null;
+        }}
+        onTouchCancel={() => { touchStart.current = null; }}
+        onTouchEnd={(event) => {
+          const start = touchStart.current;
+          touchStart.current = null;
+          if (!start) return;
+          const touch = event.changedTouches[0];
+          const distance = touch.clientX - start.x;
+          if (Math.abs(distance) > 50 && Math.abs(distance) > Math.abs(touch.clientY - start.y)) move(distance < 0 ? 1 : -1);
+        }}
+      >
+        <ProjectImage key={current.src} project={{ title: project.title, image: current.src, imageAlt: current.alt }} loading="eager" />
+      </div>
+      {screenshots.length > 1 && <div className="project-gallery-controls">
+        <button type="button" aria-label="Previous screenshot" onClick={() => move(-1)}><Icon name="previous" /></button>
+        <div className="project-gallery-caption" aria-live="polite" aria-atomic="true">
+          <span>{current.caption}</span>
+          <span className="project-gallery-count">{activeIndex + 1} / {screenshots.length}</span>
+        </div>
+        <button type="button" aria-label="Next screenshot" onClick={() => move(1)}><Icon name="next" /></button>
+      </div>}
+    </div>
+  );
+}
 function ProjectDialog({ project, onClose }: { project: Project | null; onClose: () => void }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const [activeTab, setActiveTab] = useState<"overview" | "explore">("overview");
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -113,14 +180,27 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
       ref={dialogRef}
       className="project-dialog"
       aria-labelledby="project-dialog-title"
-      aria-describedby="project-dialog-description"
-      onClose={onClose}
+      onClose={(event) => {
+        // Ignore a queued close event if the dialog has already reopened.
+        if (!event.currentTarget.open) onClose();
+      }}
       onClick={(event) => {
-        if (event.target === event.currentTarget) event.currentTarget.close();
+        if (event.target !== event.currentTarget) return;
+        const bounds = event.currentTarget.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+          event.currentTarget.close();
+        }
       }}
     >
       {project && <div className="project-dialog-layout">
         <header className="project-dialog-header">
+          <div className="project-dialog-heading">
+            {project.icon ? <ProjectIcon project={project} /> : <Icon name="folder" />}
+            <div>
+              <h2 id="project-dialog-title">{project.title}</h2>
+              <span className="project-dialog-category">{project.category}</span>
+            </div>
+          </div>
           <button
             className="project-dialog-close"
             type="button"
@@ -129,35 +209,97 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
           >
             <Icon name="close" />
           </button>
-          <h2 id="project-dialog-title">{project.title}</h2>
-          <span className="project-dialog-category">{project.category}</span>
         </header>
-        <div className="project-dialog-media">
-          <ProjectImage project={project} loading="eager" />
+        <div className="project-dialog-tabs" role="tablist" aria-label="Project information">
+          {(["overview", "explore"] as const).map((tab, index) => (
+            <button
+              key={tab}
+              ref={(element) => { tabRefs.current[index] = element; }}
+              id={`project-tab-${tab}`}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab}
+              aria-controls={`project-panel-${tab}`}
+              tabIndex={activeTab === tab ? 0 : -1}
+              onClick={() => setActiveTab(tab)}
+              onKeyDown={(event) => {
+                let nextIndex: number;
+                if (event.key === "ArrowRight" || event.key === "ArrowLeft") nextIndex = 1 - index;
+                else if (event.key === "Home") nextIndex = 0;
+                else if (event.key === "End") nextIndex = 1;
+                else return;
+                event.preventDefault();
+                setActiveTab(nextIndex === 0 ? "overview" : "explore");
+                tabRefs.current[nextIndex]?.focus();
+              }}
+            >
+              {tab === "overview" ? "Overview" : "Explore"}
+            </button>
+          ))}
         </div>
-        <div className="project-dialog-content">
-          <section aria-labelledby="project-description-heading">
-            <h3 id="project-description-heading">Description</h3>
-            <p id="project-dialog-description">{project.description}</p>
+        <div className="project-dialog-body" key={activeTab}>
+          <section
+            className="project-tabpanel project-overview"
+            id="project-panel-overview"
+            role="tabpanel"
+            aria-labelledby="project-tab-overview"
+            tabIndex={0}
+            hidden={activeTab !== "overview"}
+          >
+            <ProjectGallery project={project} />
+            <div className="project-overview-copy">
+              <h3>Overview</h3>
+              <p>{project.description}</p>
+            </div>
+            <div className="project-dialog-tech">
+              <h3>Tech stack</h3>
+              <ul className="project-tech-list">
+                {project.tech.map((technology) => <li key={technology}>{technology}</li>)}
+              </ul>
+            </div>
           </section>
-          <section aria-labelledby="project-tech-heading">
-            <h3 id="project-tech-heading">Tech stack</h3>
-            <ul className="project-tech-list">
-              {project.tech.map((technology) => <li key={technology}>{technology}</li>)}
-            </ul>
+          <section
+            className="project-tabpanel project-explore"
+            id="project-panel-explore"
+            role="tabpanel"
+            aria-labelledby="project-tab-explore"
+            tabIndex={0}
+            hidden={activeTab !== "explore"}
+          >
+            {(project.repository || project.liveUrl) && (
+              <div className="project-dialog-links" aria-label="Project links">
+                {project.repository && (
+                  <a className="primary-button" href={project.repository.url} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} GitHub repository (opens in a new tab)`}>
+                    <SocialIcon name="GitHub" />
+                    GitHub repository
+                  </a>
+                )}
+                {project.liveUrl && (
+                  <a className="project-website-link" href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} live website (opens in a new tab)`}>
+                    <Icon name="web" />
+                    Live website
+                  </a>
+                )}
+              </div>
+            )}
+            <div className="project-explanation">
+              {project.details.map((detail) => (
+                <section key={detail.heading}>
+                  <h3>{detail.heading}</h3>
+                  {detail.body && <p>{detail.body}</p>}
+                  {detail.items && (detail.ordered
+                    ? <ol>{detail.items.map((item) => <li key={item}>{item}</li>)}</ol>
+                    : <ul>{detail.items.map((item) => <li key={item}>{item}</li>)}</ul>)}
+                  {detail.code && <pre><code>{detail.code}</code></pre>}
+                  {detail.after && <p>{detail.after}</p>}
+                </section>
+              ))}
+            </div>
           </section>
-          <section aria-labelledby="project-guide-heading">
-            <h3 id="project-guide-heading">Guide</h3>
-            <ol className="project-guide-list">
-              {project.guide.map((step) => <li key={step}>{step}</li>)}
-            </ol>
-          </section>
-          {project.repository && (
-            <a className="primary-button project-repository" href={project.repository.url} target="_blank" rel="noreferrer">
-              View on GitHub
-            </a>
-          )}
         </div>
+        <footer className="project-dialog-footer">
+          <button className="primary-button" type="button" onClick={() => dialogRef.current?.close()}>Close</button>
+        </footer>
       </div>}
     </dialog>
   );
@@ -169,34 +311,39 @@ function ProjectPreview({ project, onOpen }: {
   return (
     <section className="project-preview" id="project-preview" aria-labelledby="project-preview-title">
       <div className="project-preview-heading">
-        <span className="project-preview-icon"><Icon name={projectIcons[project.title] || "portfolio"} /></span>
+        <span className="project-preview-icon"><ProjectIcon project={project} /></span>
         <div>
           <h2 id="project-preview-title">{project.title}</h2>
           <p className="project-preview-category">{project.category}</p>
         </div>
       </div>
-      <p className="project-preview-description">{project.description}</p>
-      <div className="project-preview-tech">
-        <h3>Tech stack</h3>
-        <ul className="project-tech-list">
-          {project.tech.map((technology) => <li key={technology}>{technology}</li>)}
-        </ul>
+      <div className="project-preview-media">
+        <ProjectImage key={project.image} project={project} loading="eager" />
       </div>
-      {(project.repository?.stars || project.repository?.forks) && (
-        <div className="project-preview-stats">
-          {project.repository.stars && <span><Icon name="star" />{project.repository.stars} stars</span>}
-          {project.repository.forks && <span><Icon name="fork" />{project.repository.forks} forks</span>}
+      <div className="project-preview-content">
+        <p className="project-preview-description">{project.description}</p>
+        <div className="project-preview-tech">
+          <h3>Tech stack</h3>
+          <ul className="project-tech-list">
+            {project.tech.map((technology) => <li key={technology}>{technology}</li>)}
+          </ul>
         </div>
-      )}
-      <button
-        className="nav-card project-details-action"
-        type="button"
-        aria-haspopup="dialog"
-        aria-label={`View details for ${project.title}`}
-        onClick={(event) => onOpen(project, event.currentTarget)}
-      >
-        <strong>View details</strong>
-      </button>
+        {(project.repository?.stars || project.repository?.forks) && (
+          <div className="project-preview-stats">
+            {project.repository.stars && <span><Icon name="star" />{project.repository.stars} stars</span>}
+            {project.repository.forks && <span><Icon name="fork" />{project.repository.forks} forks</span>}
+          </div>
+        )}
+        <button
+          className="primary-button project-details-action"
+          type="button"
+          aria-haspopup="dialog"
+          aria-label={`View details for ${project.title}`}
+          onClick={(event) => onOpen(project, event.currentTarget)}
+        >
+          View details
+        </button>
+      </div>
     </section>
   );
 }
@@ -248,9 +395,6 @@ export default function App() {
         <span className="shell-screw screw-bl" aria-hidden="true" />
         <span className="shell-screw screw-br" aria-hidden="true" />
         <header className="console-topbar">
-          <a className="console-title" href="#home" aria-label={`${profile.firstName}'s CV — home`}>
-            {profile.firstName.toUpperCase()}.CV
-          </a>
           <a className="availability" href="#contact">
             <i aria-hidden="true" />
             {profile.status}
@@ -328,8 +472,8 @@ export default function App() {
               </section>
             ) : (
               <section className={`inner-page${page === "portfolio" ? " projects-page" : ""}`} key={page}>
-                <a className="back-link" href="#home">
-                  Back to home
+                <a className="back-link" href="#home" aria-label="Back to home" title="Back to home">
+                  <Icon name="back" />
                 </a>
                 <div className={page === "portfolio" ? "projects-heading" : undefined}>
                   <h1>
@@ -348,27 +492,23 @@ export default function App() {
                 {page === "about" && (
                   <>
                     <div className="about-grid">
-                      <div>
-                        <h2>{profile.name}</h2>
-                        {profile.about.map((p) => (
-                          <p key={p}>{p}</p>
-                        ))}
-                        <div className="about-actions">
-                          <a className="text-link" href="#portfolio">
-                            Explore my projects
-                          </a>
-                        </div>
-                      </div>
                       <div className="about-profile">
-                        <img
-                          className="about-photo"
-                          src={profile.photo}
-                          alt={`Portrait of ${profile.name}`}
-                          width="1112"
-                          height="1414"
-                          loading="lazy"
-                          decoding="async"
-                        />
+                        <div className="about-portrait">
+                          <img
+                            className="about-photo"
+                            src={profile.photo}
+                            alt={`Portrait of ${profile.name}`}
+                            width="1112"
+                            height="1414"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                        <ul className="profile-facts" aria-label="Profile details">
+                          <li><Icon name="about" /><span>{profile.role}</span></li>
+                          <li><Icon name="location" /><span>{profile.location}</span></li>
+                          <li><Icon name="status" /><span>{profile.status}</span></li>
+                        </ul>
                         <a
                           className="nav-card resume-download"
                           href={`${import.meta.env.BASE_URL}Josh-Andrew-Esmade-Resume.pdf`}
@@ -381,23 +521,50 @@ export default function App() {
                           </span>
                         </a>
                       </div>
+                      <div className="about-story">
+                        <h2>{profile.name}</h2>
+                        <p className="about-intro">{profile.intro}</p>
+                        {profile.about.map((p) => (
+                          <p key={p}>{p}</p>
+                        ))}
+                        <section className="about-education" aria-label="Education">
+                          <Icon name="education" />
+                          <div>
+                            {profile.education.map((education) => (
+                              <div key={education.degree}>
+                                <h3>{education.degree}</h3>
+                                <p>{education.school}<br />{education.detail}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </section>
+                        <div className="about-actions">
+                          <a className="primary-button" href="#portfolio">
+                            Explore my projects
+                            <Icon name="portfolio" />
+                          </a>
+                        </div>
+                      </div>
                     </div>
-                    <h2 className="section-heading">My toolbox</h2>
-                    <div className="skills">
-                      {profile.skills.map((s, i) => (
-                        <span
-                          className={["tone-warm", "tone-cool", "tone-soft"][i % 3]}
-                          key={s}
-                        >
-                          <ToolboxIcon name={s} />
-                          {s}
-                        </span>
-                      ))}
-                    </div>
+                    <section className="about-toolbox" aria-labelledby="toolbox-heading">
+                      <h2 id="toolbox-heading">My toolbox</h2>
+                      <div className="toolbox-groups">
+                        {profile.skillGroups.map((group) => (
+                          <div className="toolbox-group" key={group.title}>
+                            <h3>{group.title}</h3>
+                            <ul className="toolbox-skills">
+                              {group.skills.map((skill) => (
+                                <li key={skill}><ToolboxIcon name={skill} />{skill}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                    {profile.certificates.length > 0 && (
                     <section className="certificate-section" aria-labelledby="certificates-heading">
                       <h2 id="certificates-heading">Certificates</h2>
                       <p className="certificate-intro">Courses, training, and professional credentials.</p>
-                      {profile.certificates.length > 0 ? (
                         <ul className="certificate-list">
                           {profile.certificates.map((certificate) => (
                             <li className="certificate-item" key={certificate.id}>
@@ -438,13 +605,8 @@ export default function App() {
                             </li>
                           ))}
                         </ul>
-                      ) : (
-                        <div className="certificates-empty">
-                          <span className="certificate-icon"><Icon name="certificate" /></span>
-                          <p>Certificates will appear here as I add them.</p>
-                        </div>
-                      )}
                     </section>
+                    )}
                   </>
                 )}
                 {page === "portfolio" && (
@@ -480,7 +642,7 @@ export default function App() {
                             style={{ "--project-row": index + 1 } as CSSProperties}
                             onClick={() => setActiveProjectTitle(project.title)}
                           >
-                            <Icon name={projectIcons[project.title] || "portfolio"} />
+                            <ProjectIcon project={project} />
                             <span className="project-choice-title">{project.title}</span>
                             <span className="project-choice-category">{project.category}</span>
                           </button>
@@ -551,6 +713,7 @@ export default function App() {
         </div>
       </div>
       <ProjectDialog
+        key={selectedProject?.title ?? "closed"}
         project={selectedProject}
         onClose={() => {
           setSelectedProject(null);
