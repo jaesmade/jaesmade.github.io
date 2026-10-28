@@ -58,8 +58,11 @@ export type Project = {
   screenshots?: { src: string; alt: string; caption: string }[];
   category: string;
   description: string;
+  role?: string;
+  contribution?: string;
+  approach?: string;
   tech: string[];
-  details: { heading: string; body?: string; items?: string[]; ordered?: boolean; code?: string; after?: string }[];
+  details: { heading: string; body?: string; items?: string[]; ordered?: boolean; code?: string; after?: string; collapsible?: boolean }[];
   liveUrl?: string;
   repository?: {
     url: string;
@@ -87,6 +90,9 @@ export const projects: Project[] = [
     category: "AI / Data",
     description:
       "An inclusive intelligent job matching system connecting PWD job seekers with opportunities based on skills, experience, and accessibility requirements.",
+    role: "Full website development",
+    contribution: "I built the entire SkillDis website, from job seeker and employer dashboards to résumé matching, accommodation filters, and application tracking.",
+    approach: "PHP and MySQL support separate job seeker and employer workflows. Résumé text extraction and skill matching help connect candidates with opportunities, alongside workplace accommodation filters.",
     tech: ["PHP", "MySQL", "JavaScript", "NLP"],
     // Explore content from README.md, blob 29fb5b328cf1d7f8c3f8464889d0d8dce23905b4.
     repository: { url: "https://github.com/jaesmade/Skilldis" },
@@ -96,14 +102,17 @@ export const projects: Project[] = [
         body: "SkillDis is an inclusive job matching web app that connects job seekers, including persons with disabilities (PWDs), with employers. It helps users find opportunities through resume and skill matching, workplace accommodation filters, and application tracking.",
       },
       {
-        heading: "Features",
+        heading: "Job seeker tools",
         items: [
-          "Separate accounts and dashboards for general job seekers, PWD job seekers, and employers.",
+          "Separate accounts and dashboards for general job seekers and PWD job seekers.",
           "Resume uploads in .txt and .docx formats, with text extraction for matching.",
           "PWD profile and skill management, job recommendations, and accommodation filters.",
           "Job applications and status tracking for PWD job seekers.",
-          "Employer tools to post and manage jobs, review candidates, and update application statuses.",
         ],
+      },
+      {
+        heading: "Employer tools",
+        body: "A dedicated employer dashboard supports posting and managing jobs, reviewing candidates, and updating application statuses.",
       },
       {
         heading: "Built With",
@@ -111,6 +120,7 @@ export const projects: Project[] = [
       },
       {
         heading: "Local Setup",
+        collapsible: true,
         ordered: true,
         items: [
           "Install PHP with PDO MySQL, ZIP, and DOM extensions, and a MySQL server.",
@@ -138,7 +148,10 @@ export const projects: Project[] = [
     ],
     category: "Web",
     description:
-      "A responsive municipal website concept making local information, tourism, and community resources easier to access.",
+      "A complete redesign of the Municipal Siniloan website, making government services, public information, and tourism resources easier to find.",
+    role: "Complete website redesign",
+    contribution: "I redesigned the entire Municipal Siniloan website, covering its government services, office directory, public information, and tourism pages.",
+    approach: "The WordPress website organizes services and public information by topic, with dedicated pages for municipal offices, transparency documents, and local destinations.",
     tech: ["WordPress", "HTML", "JavaScript", "CSS"],
     // Explore content verified against the official site on 2026-10-27:
     // /, /services/, /offices/, /full-disclosure/, and /about-siniloan/explore-siniloan/.

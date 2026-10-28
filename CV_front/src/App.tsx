@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useRef, useState, type CSSProperties } from "react";
 import { profile, projects, type Project } from "./data/portfolio";
 import ToolboxIcon from "./components/ToolboxIcon";
+import ScreenshotViewer from "./components/ScreenshotViewer";
 import "./index.css";
 const pages = ["home", "about", "portfolio", "contact"] as const;
 type Page = (typeof pages)[number];
@@ -38,6 +39,7 @@ function Icon({ name }: { name: string }) {
     certificate: "M4 3h16v14H4ZM8 7h8M8 11h3M14 15l-2 7 4-2 4 2-2-7M19 13a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z",
     contact: "M3 5h18v14H3ZM3 5l9 8 9-8",
     close: "M5 5l14 14M19 5 5 19",
+    copy: "M9 9h12v12H9ZM5 15H3V3h12v2",
     sun: "M12 1v2m0 18v2M1 12h2m18 0h2M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z",
     moon: "M21 13A9 9 0 0 1 11 3a9 9 0 1 0 10 10Z",
     people: "M14 21v-2a4 4 0 0 0-8 0v2M13 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM18 5a3 3 0 0 1 0 6M18 15a4 4 0 0 1 4 4v2",
@@ -108,7 +110,10 @@ function ProjectGallery({ project }: { project: Project }) {
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const screenshots = project.screenshots;
   if (!screenshots?.length) {
-    return <div className="project-dialog-media"><ProjectImage project={project} loading="eager" /></div>;
+    return <div className="project-gallery">
+      <div className="project-dialog-media"><ProjectImage project={project} loading="eager" /></div>
+      <ScreenshotViewer src={`${import.meta.env.BASE_URL}${project.image}`} alt={project.imageAlt} title={project.title} />
+    </div>;
   }
   const current = screenshots[activeIndex];
   const move = (step: number) => setActiveIndex((index) => (index + step + screenshots.length) % screenshots.length);
@@ -155,6 +160,7 @@ function ProjectGallery({ project }: { project: Project }) {
         </div>
         <button type="button" aria-label="Next screenshot" onClick={() => move(1)}><Icon name="next" /></button>
       </div>}
+      <ScreenshotViewer src={`${import.meta.env.BASE_URL}${current.src}`} alt={current.alt} title={`${project.title} — ${current.caption}`} />
     </div>
   );
 }
@@ -233,7 +239,7 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
                 tabRefs.current[nextIndex]?.focus();
               }}
             >
-              {tab === "overview" ? "Overview" : "Explore"}
+              {tab === "overview" ? "Overview" : "Details & links"}
             </button>
           ))}
         </div>
@@ -248,8 +254,14 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
           >
             <ProjectGallery project={project} />
             <div className="project-overview-copy">
-              <h3>Overview</h3>
-              <p>{project.description}</p>
+              <h3>{project.contribution ? "My contribution" : "Overview"}</h3>
+              <p>{project.contribution ?? project.description}</p>
+              <button className="project-details-link" type="button" onClick={() => {
+                setActiveTab("explore");
+                tabRefs.current[1]?.focus();
+              }}>
+                {project.repository ? "Read the details & view GitHub" : project.liveUrl ? "Read the details & visit the website" : "Read the project details"}
+              </button>
             </div>
             <div className="project-dialog-tech">
               <h3>Tech stack</h3>
@@ -283,22 +295,32 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
               </div>
             )}
             <div className="project-explanation">
-              {project.details.map((detail) => (
-                <section key={detail.heading}>
-                  <h3>{detail.heading}</h3>
+              {project.approach && <section>
+                <h3>Technical approach</h3>
+                <p>{project.approach}</p>
+              </section>}
+              {project.details.map((detail) => {
+                const content = <>
                   {detail.body && <p>{detail.body}</p>}
                   {detail.items && (detail.ordered
                     ? <ol>{detail.items.map((item) => <li key={item}>{item}</li>)}</ol>
                     : <ul>{detail.items.map((item) => <li key={item}>{item}</li>)}</ul>)}
                   {detail.code && <pre><code>{detail.code}</code></pre>}
                   {detail.after && <p>{detail.after}</p>}
+                </>;
+                return detail.collapsible ? <details className="project-technical-notes" key={detail.heading}>
+                  <summary>{detail.heading}</summary>
+                  <div>{content}</div>
+                </details> : <section key={detail.heading}>
+                  <h3>{detail.heading}</h3>
+                  {content}
                 </section>
-              ))}
+              })}
             </div>
           </section>
         </div>
         <footer className="project-dialog-footer">
-          <button className="primary-button" type="button" onClick={() => dialogRef.current?.close()}>Close</button>
+          <button className="secondary-button" type="button" onClick={() => dialogRef.current?.close()}>Close</button>
         </footer>
       </div>}
     </dialog>
@@ -322,6 +344,7 @@ function ProjectPreview({ project, onOpen }: {
       </div>
       <div className="project-preview-content">
         <p className="project-preview-description">{project.description}</p>
+        {project.role && <p className="project-preview-role"><strong>My role:</strong> {project.role}</p>}
         <div className="project-preview-tech">
           <h3>Tech stack</h3>
           <ul className="project-tech-list">
@@ -341,6 +364,7 @@ function ProjectPreview({ project, onOpen }: {
           aria-label={`View details for ${project.title}`}
           onClick={(event) => onOpen(project, event.currentTarget)}
         >
+          <Icon name="folder" />
           View details
         </button>
       </div>
@@ -354,6 +378,9 @@ export default function App() {
   const [activeProjectTitle, setActiveProjectTitle] = useState(projects[0]?.title ?? "");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const mainRef = useRef<HTMLElement>(null);
+  const previousPageRef = useRef(page);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const [theme, setTheme] = useState(() => {
     return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
   });
@@ -383,7 +410,14 @@ export default function App() {
   }, [theme]);
   useEffect(() => {
     document.title = `${profile.name} — ${page === "home" ? "Developer portfolio" : page}`;
+    if (previousPageRef.current !== page) mainRef.current?.focus({ preventScroll: true });
+    previousPageRef.current = page;
   }, [page]);
+  useEffect(() => {
+    if (copyState === "idle") return;
+    const timeout = window.setTimeout(() => setCopyState("idle"), 5000);
+    return () => window.clearTimeout(timeout);
+  }, [copyState]);
   return (
     <>
       <a className="skip-link" href="#main">
@@ -406,7 +440,7 @@ export default function App() {
               {profile.handle}
             </a>
           </div>
-          <main id="main" className={page === "home" ? "home-main" : undefined} tabIndex={-1}>
+          <main ref={mainRef} id="main" aria-label={pageLabels[page]} className={page === "home" ? "home-main" : undefined} tabIndex={-1}>
             {page === "home" ? (
               <section className="home-layout">
                 <div className="intro">
@@ -440,16 +474,19 @@ export default function App() {
                       {
                         id: "about",
                         title: "About me",
+                        detail: "Profile, skills & résumé",
                         color: "tone-warm",
                       },
                       {
                         id: "portfolio",
                         title: "My projects",
+                        detail: "Selected work & source code",
                         color: "tone-cool",
                       },
                       {
                         id: "contact",
                         title: "Contact",
+                        detail: "Projects & opportunities",
                         color: "tone-soft",
                       },
                     ].map((item) => (
@@ -465,6 +502,7 @@ export default function App() {
                         </span>
                         <span>
                           <strong>{item.title}</strong>
+                          <small>{item.detail}</small>
                         </span>
                       </a>
                     ))}
@@ -658,10 +696,21 @@ export default function App() {
                     <p>
                       Email me about projects or job opportunities.
                     </p>
-                    <a className="primary-button" href={`mailto:${profile.email}`}>
-                      <Icon name="contact" />
-                      {profile.email}
-                    </a>
+                    <div className="contact-actions">
+                      <a className="primary-button" href={`mailto:${profile.email}`}>
+                        <Icon name="contact" />
+                        {profile.email}
+                      </a>
+                      <button className="copy-email" type="button" onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(profile.email);
+                          setCopyState("copied");
+                        } catch {
+                          setCopyState("failed");
+                        }
+                      }}><Icon name="copy" />Copy email</button>
+                    </div>
+                    <p className="contact-copy-status" role="status">{copyState === "copied" ? "Email address copied." : copyState === "failed" ? "Select and copy the email address above." : ""}</p>
                     <div className="contact-socials">
                       {profile.socials.map((s) => (
                         <a
