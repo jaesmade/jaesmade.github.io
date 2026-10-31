@@ -260,7 +260,7 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
                 setActiveTab("explore");
                 tabRefs.current[1]?.focus();
               }}>
-                {project.repository ? "Read the details & view GitHub" : project.liveUrl ? "Read the details & visit the website" : "Read the project details"}
+                Read the project details
               </button>
             </div>
             <div className="project-dialog-tech">
@@ -357,16 +357,30 @@ function ProjectPreview({ project, onOpen }: {
             {project.repository.forks && <span><Icon name="fork" />{project.repository.forks} forks</span>}
           </div>
         )}
-        <button
-          className="primary-button project-details-action"
-          type="button"
-          aria-haspopup="dialog"
-          aria-label={`View details for ${project.title}`}
-          onClick={(event) => onOpen(project, event.currentTarget)}
-        >
-          <Icon name="folder" />
-          View details
-        </button>
+        <div className="project-preview-actions">
+          {project.repository && (
+            <a className="secondary-button" href={project.repository.url} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} GitHub repository (opens in a new tab)`}>
+              <SocialIcon name="GitHub" />
+              GitHub
+            </a>
+          )}
+          {project.liveUrl && (
+            <a className="secondary-button" href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} live website (opens in a new tab)`}>
+              <Icon name="web" />
+              Live website
+            </a>
+          )}
+          <button
+            className="primary-button project-details-action"
+            type="button"
+            aria-haspopup="dialog"
+            aria-label={`View details for ${project.title}`}
+            onClick={(event) => onOpen(project, event.currentTarget)}
+          >
+            <Icon name="folder" />
+            View details
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -448,9 +462,6 @@ export default function App() {
                     Hey, I'm
                     <br />
                     <span className="name-highlight">{profile.firstName}.</span>
-                    <span className="wave" aria-hidden="true">
-                      ✌
-                    </span>
                   </h1>
                   <p className="intro-copy">{profile.intro}</p>
                   <Divider />
@@ -602,7 +613,7 @@ export default function App() {
                     {profile.certificates.length > 0 && (
                     <section className="certificate-section" aria-labelledby="certificates-heading">
                       <h2 id="certificates-heading">Certificates</h2>
-                      <p className="certificate-intro">Courses, training, and professional credentials.</p>
+                      <p className="certificate-intro">Certificates of participation from technical webinars.</p>
                         <ul className="certificate-list">
                           {profile.certificates.map((certificate) => (
                             <li className="certificate-item" key={certificate.id}>

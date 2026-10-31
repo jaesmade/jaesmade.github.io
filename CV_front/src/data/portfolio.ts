@@ -46,9 +46,58 @@ export const profile = {
   ],
   skills: skillGroups.flatMap((group) => group.skills),
   skillGroups,
-  // Add your real credentials here. See README.md for an example entry.
-  // File paths are relative to public/, e.g. "certificates/my-certificate.pdf".
-  certificates: [] as Certificate[],
+  // Webinar participation certificates, newest first. Paths are relative to public/.
+  certificates: [
+    {
+      id: "aws-cloud-essentials",
+      title: "AWS Cloud Essentials",
+      issuer: "Koenig",
+      issued: "2025",
+      file: "certificates/aws-cloud-essentials.pdf",
+    },
+    {
+      id: "github-for-youth",
+      title: "GitHub for Youth",
+      issuer: "Koenig",
+      issued: "2025",
+      file: "certificates/github-for-youth.pdf",
+    },
+    {
+      id: "whats-new-in-java-21",
+      title: "What's New in Java 21 - Boost Performance & Write Cleaner Code",
+      issuer: "Koenig",
+      issued: "2025",
+      file: "certificates/whats-new-in-java-21.pdf",
+    },
+    {
+      id: "implementing-devops-in-aws",
+      title: "Implementing DevOps in AWS",
+      issuer: "Koenig",
+      issued: "2025",
+      file: "certificates/implementing-devops-in-aws.pdf",
+    },
+    {
+      id: "microsoft-copilot-studio-for-developer",
+      title: "Microsoft Copilot Studio for Developer",
+      issuer: "Koenig",
+      issued: "2025",
+      file: "certificates/microsoft-copilot-studio-for-developer.pdf",
+    },
+    {
+      id: "generative-ai-for-developers",
+      title: "Generative AI for Developers",
+      issuer: "Koenig",
+      issued: "2025",
+      file: "certificates/generative-ai-for-developers.pdf",
+    },
+    {
+      id: "basics-of-api-testing",
+      title: "Basics of API Testing",
+      issuer: "Koenig",
+      issued: "2025",
+      file: "certificates/basics-of-api-testing.pdf",
+    },
+  ] as Certificate[],
 };
 export type Project = {
   title: string;
@@ -76,6 +125,104 @@ export type Project = {
 // Optional repository counts appear in the project summary. Never invent links.
 export const projects: Project[] = [
   {
+    title: "Screen Assistant (Study Desk)",
+    image: "projects/screen-assistant/01-study-desk.png",
+    imageAlt: "Study Desk initial workspace with question input, screen capture controls, and study-coach panel",
+    icon: "projects/screen-assistant/study-desk-mark.svg",
+    screenshots: [
+      { src: "projects/screen-assistant/01-study-desk.png", alt: "Study Desk desktop app before a question is submitted", caption: "Study desk · initial workspace" },
+    ],
+    category: "Systems",
+    description:
+      "A desktop study coach that turns typed questions or cropped screen captures into AI explanations, with offline text extraction, saved questions, and a quick overlay.",
+    approach: "Electron and React power the desktop workspace. A typed preload bridge connects the sandboxed interface to screen capture, local Tesseract.js OCR, encrypted credential storage, and streamed OpenRouter requests.",
+    tech: ["Electron", "React", "TypeScript", "Tesseract.js", "OpenRouter"],
+    repository: { url: "https://github.com/jaesmade/Screen-Assistant" },
+    // Content verified against the local screen-assistant README and renderer/main source.
+    details: [
+      {
+        heading: "Screen capture and local text extraction",
+        body: "Type a question or select a screen or window and crop the relevant area. Bundled Tesseract.js and English language data extract printed text offline; users can review and correct it before replacing or appending to their question, with an optional image attachment.",
+      },
+      {
+        heading: "AI study explanations",
+        body: "For practice and assessments where AI assistance is permitted, questions and optional crops are sent through OpenRouter’s free model route. Explanations stream into the workspace with Markdown, code, tables, and KaTeX math support. Users can stop an active response; incomplete responses are excluded from history.",
+      },
+      {
+        heading: "Saved questions",
+        body: "Completed questions, explanations, model names, and attached crops are saved locally. Users can search and reopen entries without another API request, delete individual questions, or clear the history. Retention is limited to the latest 100 questions within a 50 MB file-size limit.",
+      },
+      {
+        heading: "Quick overlay and desktop integration",
+        body: "Ctrl+Shift+Space toggles a draggable, resizable, always-on-top workspace with capture, OCR, and streamed explanations. A system tray menu provides access to the desk and overlay. The project includes a Windows x64 installer.",
+      },
+      {
+        heading: "Local data and credentials",
+        body: "The main process stores the OpenRouter key using Electron’s native encryption. Capture and OCR stay on the device until a question is submitted; submitted text and any attached crop go to OpenRouter. Question history is stored separately as unencrypted local JSON.",
+      },
+      {
+        heading: "Local setup",
+        collapsible: true,
+        ordered: true,
+        items: [
+          "Install Node.js 22.18 or newer and run npm ci from the project directory.",
+          "Start the Electron development app with npm run dev.",
+          "Open Settings and save an OpenRouter API key to enable AI explanations. Local OCR works without a key or internet connection.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "HITOVEST",
+    image: "projects/hitovest/01-home.webp",
+    imageAlt: "HITOVEST homepage introducing its catfish farming tools and supplier network",
+    icon: "projects/hitovest/hitovest-mark.webp",
+    screenshots: [
+      { src: "projects/hitovest/01-home.webp", alt: "HITOVEST public homepage", caption: "Homepage" },
+      { src: "projects/hitovest/02-dashboard.webp", alt: "HITOVEST farmer dashboard with sample farm information", caption: "Farmer dashboard · sample data" },
+      { src: "projects/hitovest/03-feed-planning.webp", alt: "HITOVEST daily feed allowance calculator with sample farm inputs", caption: "Feed planning · sample data" },
+      { src: "projects/hitovest/04-water-quality.webp", alt: "HITOVEST water quality workspace with sample temperature and pH readings", caption: "Water quality · sample data" },
+      { src: "projects/hitovest/05-marketplace.webp", alt: "HITOVEST marketplace showing sample feed, fingerling, and equipment listings", caption: "Marketplace · sample data" },
+    ],
+    category: "Web",
+    description:
+      "A catfish farming portal bringing farm profiles, feed and profitability planning, biomass estimates, water monitoring, and a local supplier directory together.",
+    approach: "Django and SQLite support separate farmer, store owner, and guest workflows. An authenticated sensor endpoint accepts ESP32 water readings, while Leaflet and OpenStreetMap support the local directory map.",
+    tech: ["Python", "Django", "SQLite", "JavaScript", "ESP32"],
+    repository: { url: "https://github.com/jaesmade/Hitovest" },
+    // Content verified against the local HITOVEST README and portal source.
+    details: [
+      {
+        heading: "Farm management and planning",
+        body: "Farmers can save multiple farm profiles, plan daily and total feed requirements, and estimate profitability using harvest revenue and operating costs.",
+      },
+      {
+        heading: "Water monitoring",
+        body: "Farmers can record temperature and pH manually or receive readings through a farm-authenticated sensor API. The included ESP32 sketch connects a DS18B20 temperature sensor and a PH-4502C pH module.",
+      },
+      {
+        heading: "Biomass estimates",
+        body: "The biomass tool uses a benchmark-calibrated planning heuristic based on temperature, pH, population, daily feed, pond area, and feed type. It reproduces a reference case from the thesis; it is not a trained decision tree or a validated production forecast.",
+      },
+      {
+        heading: "Marketplace and local directory",
+        body: "Store owners can publish, edit, and pause fish supply, feed, and fingerling listings. Visitors can search active products, filter by category, and browse the farm and supplier map. The map includes a local-area fallback when its online library is unavailable.",
+      },
+      {
+        heading: "Local setup",
+        collapsible: true,
+        ordered: true,
+        items: [
+          "Create and activate a virtual environment with Python 3.10 or newer.",
+          "Install dependencies with python -m pip install -r requirements.txt.",
+          "Create database tables with python manage.py migrate.",
+          "Start the development server with python manage.py runserver, then open http://127.0.0.1:8000/.",
+        ],
+        after: "Create a Farmer, Store owner, or Guest account to explore the role-specific workflows. Gallery screenshots use sample data from an isolated preview database.",
+      },
+    ],
+  },
+  {
     title: "SkillDis",
     image: "projects/skilldis/03-pwd-dashboard.webp",
     imageAlt: "SkillDis PWD job seeker dashboard with job recommendations and accessibility tools",
@@ -87,7 +234,7 @@ export const projects: Project[] = [
       { src: "projects/skilldis/04-application-tracking.webp", alt: "SkillDis job application tracking page", caption: "Application tracking" },
       { src: "projects/skilldis/05-employer-workspace.webp", alt: "SkillDis employer workspace", caption: "Employer workspace" },
     ],
-    category: "AI / Data",
+    category: "Web",
     description:
       "An inclusive intelligent job matching system connecting PWD job seekers with opportunities based on skills, experience, and accessibility requirements.",
     role: "Full website development",

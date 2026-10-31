@@ -211,14 +211,6 @@ main:focus { outline: none; }
 .intro, .card-nav, .about-grid > div { min-width: 0; }
 .intro h1 { margin-bottom: var(--space-4); white-space: nowrap; }
 .name-highlight { position: relative; }
-.wave {
-  display: inline-block;
-  margin-left: var(--space-3);
-  font-family: Arial, sans-serif;
-  font-size: clamp(36px, 4.5vw, 60px);
-  line-height: 1;
-  vertical-align: baseline;
-}
 .intro-copy {
   max-width: 380px;
   margin-bottom: var(--space-4);
@@ -563,6 +555,8 @@ main:focus { outline: none; }
 .project-preview-stats { display: flex; flex-wrap: wrap; gap: var(--space-4); font-size: 12px; }
 .project-preview-stats span { display: inline-flex; align-items: center; gap: var(--space-2); }
 .project-preview-stats svg { width: 16px; height: 16px; }
+.project-preview-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); width: 100%; }
+.project-preview-actions > * { max-width: 100%; }
 .project-preview .project-details-action { min-height: 48px; padding-block: var(--space-3); }
 .project-empty { padding: var(--space-6) 0; }
 .project-dialog {
@@ -727,7 +721,6 @@ main:focus-visible { outline: 2px solid var(--focus); outline-offset: var(--spac
   .wordmark { font-size: 11px; }
   .home-layout { padding-block: var(--space-6); gap: var(--space-6); }
   .intro h1 { font-size: clamp(24px, 7.1vw, 34px); line-height: 1.5; margin-bottom: var(--space-4); }
-  .wave { margin-left: var(--space-2); font-size: 38px; }
   .intro-copy { font-size: 17px; margin-bottom: var(--space-3); }
   .social-row { gap: var(--space-1) var(--space-3); font-size: 12px; }
   .social-row a { gap: 6px; }
