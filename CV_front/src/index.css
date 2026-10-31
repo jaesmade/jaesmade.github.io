@@ -18,10 +18,10 @@
   --bg: #677558;
   --shell: #e4d7b6;
   --hardware-ink: #153519;
-  --shell-border: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23e4d7b6%22%20stroke%3D%22%23153519%22%20stroke-width%3D%222%22%20d%3D%22M6%201H26V3H29V6H31V26H29V29H26V31H6V29H3V26H1V6H3V3H6Z%22%2F%3E%3C%2Fsvg%3E");
-  --screen-border: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23c6d877%22%20stroke%3D%22%23153519%22%20stroke-width%3D%222%22%20d%3D%22M6%201H26V3H29V6H31V26H29V29H26V31H6V29H3V26H1V6H3V3H6Z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23153519%22%20d%3D%22M8%205H24V8H27V24H24V27H8V24H5V8H8Z%22%2F%3E%3C%2Fsvg%3E");
-  --menu-border: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23c6d877%22%20stroke%3D%22%23153519%22%20stroke-width%3D%222%22%20d%3D%22M6%201H26V3H29V6H31V26H29V29H26V31H6V29H3V26H1V6H3V3H6Z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23153519%22%20d%3D%22M8%205H24V8H27V24H24V27H8V24H5V8H8Z%22%2F%3E%3C%2Fsvg%3E");
-  --menu-selected-border: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23153519%22%20stroke%3D%22%23153519%22%20stroke-width%3D%222%22%20d%3D%22M6%201H26V3H29V6H31V26H29V29H26V31H6V29H3V26H1V6H3V3H6Z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23d4e48f%22%20d%3D%22M8%205H24V8H27V24H24V27H8V24H5V8H8Z%22%2F%3E%3C%2Fsvg%3E");
+  --shell-border: url("./assets/borders/shell.webp");
+  --screen-border: url("./assets/borders/screen-light.webp");
+  --menu-border: url("./assets/borders/menu-light.webp");
+  --menu-selected-border: url("./assets/borders/menu-selected-light.webp");
   --screen: #c6d877;
   --ink: #153519;
   --muted: #304d26;
@@ -57,9 +57,9 @@
   scrollbar-color: var(--ink) var(--screen);
 }
 :root[data-theme="dark"] {
-  --screen-border: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23203a29%22%20stroke%3D%22%23153519%22%20stroke-width%3D%222%22%20d%3D%22M6%201H26V3H29V6H31V26H29V29H26V31H6V29H3V26H1V6H3V3H6Z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%2385995f%22%20d%3D%22M8%205H24V8H27V24H24V27H8V24H5V8H8Z%22%2F%3E%3C%2Fsvg%3E");
-  --menu-border: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23203a29%22%20stroke%3D%22%23d3e39c%22%20stroke-width%3D%222%22%20d%3D%22M6%201H26V3H29V6H31V26H29V29H26V31H6V29H3V26H1V6H3V3H6Z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23d3e39c%22%20d%3D%22M8%205H24V8H27V24H24V27H8V24H5V8H8Z%22%2F%3E%3C%2Fsvg%3E");
-  --menu-selected-border: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%20shape-rendering%3D%22crispEdges%22%3E%3Cpath%20fill%3D%22%23cfdf8e%22%20stroke%3D%22%23d3e39c%22%20stroke-width%3D%222%22%20d%3D%22M6%201H26V3H29V6H31V26H29V29H26V31H6V29H3V26H1V6H3V3H6Z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23153519%22%20d%3D%22M8%205H24V8H27V24H24V27H8V24H5V8H8Z%22%2F%3E%3C%2Fsvg%3E");
+  --screen-border: url("./assets/borders/screen-dark.webp");
+  --menu-border: url("./assets/borders/menu-dark.webp");
+  --menu-selected-border: url("./assets/borders/menu-selected-dark.webp");
   --screen: #203a29;
   --ink: #d3e39c;
   --muted: #becf8f;
