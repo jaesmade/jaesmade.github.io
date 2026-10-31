@@ -120,7 +120,7 @@ export type Project = {
   };
 };
 // Image paths are relative to public/. Replace a placeholder file, or point image
-// to your own JPG/PNG/WebP (e.g. "projects/skilldis.webp") and update imageAlt.
+// to your own WebP screenshot and update imageAlt. Use SVG for vector artwork.
 // Add a verified repository and/or liveUrl to show project links in Explore.
 // Optional repository counts appear in the project summary. Never invent links.
 export const projects: Project[] = [
@@ -128,7 +128,7 @@ export const projects: Project[] = [
     title: "Screen Assistant (Study Desk)",
     image: "projects/screen-assistant/01-study-desk.webp",
     imageAlt: "Study Desk initial workspace with question input, screen capture controls, and study-coach panel",
-    icon: "projects/screen-assistant/study-desk-mark.webp",
+    icon: "projects/screen-assistant/study-desk-mark.svg",
     screenshots: [
       { src: "projects/screen-assistant/01-study-desk.webp", alt: "Study Desk desktop app before a question is submitted", caption: "Study desk · initial workspace" },
     ],
@@ -226,7 +226,7 @@ export const projects: Project[] = [
     title: "SkillDis",
     image: "projects/skilldis/03-pwd-dashboard.webp",
     imageAlt: "SkillDis PWD job seeker dashboard with job recommendations and accessibility tools",
-    icon: "projects/skilldis/skilldis-mark.webp",
+    icon: "projects/skilldis/skilldis-mark.svg",
     screenshots: [
       { src: "projects/skilldis/01-home.webp", alt: "SkillDis home page introducing the inclusive job matching platform", caption: "Home" },
       { src: "projects/skilldis/02-job-seeker-dashboard.webp", alt: "SkillDis general job seeker dashboard", caption: "Job seeker dashboard" },
@@ -284,7 +284,7 @@ export const projects: Project[] = [
     title: "Municipal Siniloan Website",
     image: "projects/siniloan/01-home.webp",
     imageAlt: "Municipality of Siniloan official website homepage with municipal hall and government services",
-    icon: "projects/siniloan/siniloan-seal.webp",
+    icon: "projects/siniloan/siniloan-seal.svg",
     liveUrl: "https://siniloanlaguna.gov.ph/",
     screenshots: [
       { src: "projects/siniloan/01-home.webp", alt: "Siniloan official website homepage and service shortcuts", caption: "Homepage" },

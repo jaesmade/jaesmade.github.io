@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#efded0"/>
+  <g fill="none" stroke="#53655d" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="588" y="204" width="104" height="84" rx="8"/>
+    <circle cx="617" cy="229" r="8"/>
+    <path d="m588 273 30-27 25 20 21-17 28 24"/>
+  </g>
+  <text x="640" y="378" text-anchor="middle" fill="#243b36" font-family="Arial, sans-serif" font-size="42" font-weight="600">Smart Irrigation</text>
+  <text x="640" y="434" text-anchor="middle" fill="#53655d" font-family="Arial, sans-serif" font-size="28">Screenshot placeholder</text>
+  <text x="640" y="590" text-anchor="middle" fill="#53655d" font-family="Arial, sans-serif" font-size="22">16:9 · 1280 × 720</text>
+</svg>

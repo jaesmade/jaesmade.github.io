@@ -96,7 +96,7 @@ function ProjectImage({ project, loading = "lazy" }: { project: Pick<Project, "t
       loading={loading}
       decoding="async"
       onError={(event) => {
-        const fallback = `${import.meta.env.BASE_URL}projects/placeholder.webp`;
+        const fallback = `${import.meta.env.BASE_URL}projects/placeholder.svg`;
         if (event.currentTarget.getAttribute("src") !== fallback) {
           event.currentTarget.src = fallback;
           event.currentTarget.alt = `Image unavailable for ${project.title}`;
