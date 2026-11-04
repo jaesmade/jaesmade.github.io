@@ -55,6 +55,9 @@ export default function ScreenshotViewer({ src, alt, title }: ScreenshotViewerPr
         className="screenshot-enlarge"
         aria-haspopup="dialog"
         aria-label={`Enlarge screenshot: ${title}`}
+        title="Enlarge screenshot"
+        onTouchStart={(event) => event.stopPropagation()}
+        onTouchEnd={(event) => event.stopPropagation()}
         onClick={() => {
           setActualSize(false);
           setFailed(false);
@@ -63,7 +66,6 @@ export default function ScreenshotViewer({ src, alt, title }: ScreenshotViewerPr
         }}
       >
         <ViewerIcon />
-        Enlarge screenshot
       </button>
       {isOpen && createPortal(
         <dialog
@@ -72,6 +74,8 @@ export default function ScreenshotViewer({ src, alt, title }: ScreenshotViewerPr
           aria-labelledby={titleId}
           aria-describedby={helpId}
           onKeyDown={(event) => event.stopPropagation()}
+          onTouchStart={(event) => event.stopPropagation()}
+          onTouchEnd={(event) => event.stopPropagation()}
           onCancel={(event) => event.stopPropagation()}
           onClose={(event) => {
             event.stopPropagation();

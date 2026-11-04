@@ -113,6 +113,7 @@ export type Project = {
   tech: string[];
   details: { heading: string; body?: string; items?: string[]; ordered?: boolean; code?: string; after?: string; collapsible?: boolean }[];
   liveUrl?: string;
+  download?: { url: string; label: string };
   repository?: {
     url: string;
     stars?: string;
@@ -124,6 +125,49 @@ export type Project = {
 // Add a verified repository and/or liveUrl to show project links in Explore.
 // Optional repository counts appear in the project summary. Never invent links.
 export const projects: Project[] = [
+  {
+    title: "Excel Workbook Splitter & Merger",
+    image: "projects/excel-workbook-splitter/01-workbook-splitter.webp",
+    imageAlt: "Excel Splitter & Merger desktop app showing file selection, grouping columns, and workbook generation",
+    category: "Systems",
+    description:
+      "A Python desktop tool that combines Excel and CSV files, then splits records into worksheets by one or more grouping columns. Preview, sort, and select groups before saving the result.",
+    approach: "CustomTkinter provides the desktop interface. pandas combines tabular data, while openpyxl, xlrd, and xlwt handle Excel formats. Workbook processing runs on a background thread to keep the interface responsive.",
+    tech: ["Python", "CustomTkinter", "pandas", "openpyxl", "xlrd", "xlwt"],
+    repository: { url: "https://github.com/jaesmade/Python-Excel-Workbook-Separator-Uniter" },
+    download: {
+      url: "https://github.com/jaesmade/Python-Excel-Workbook-Separator-Uniter/releases/download/excel/main.exe",
+      label: "Download for Windows",
+    },
+    details: [
+      {
+        heading: "Split and combine workbooks",
+        body: "Select Excel workbooks (.xlsx, .xlsm, or .xls) and CSV files, then choose a worksheet or All sheets. The app groups matching rows into separate worksheets in a new workbook.",
+        items: [
+          "Group by a single column or a combination of columns.",
+          "Combine worksheets across files, matching headers even when their order differs.",
+          "Preview detected groups, sort alphabetically or by record count, and exclude groups before exporting.",
+          "Retain source rows and headers, leave missing columns blank, and sanitize output sheet names for Excel.",
+        ],
+      },
+      {
+        heading: "Windows download",
+        body: "Download for Windows retrieves main.exe directly from the repository's App v1.01 release. The repository contains the current Python source and setup instructions.",
+      },
+      {
+        heading: "Run from source",
+        collapsible: true,
+        ordered: true,
+        items: [
+          "Clone the GitHub repository or download and extract its source archive.",
+          "Install the dependencies from the project folder.",
+          "Start the desktop application with Python.",
+        ],
+        code: "python -m pip install -r requirements.txt\npython main.py",
+        after: "After selecting the files, worksheet, and grouping columns, generate the workbook and choose its destination in the Save As dialog.",
+      },
+    ],
+  },
   {
     title: "Screen Assistant (Study Desk)",
     image: "projects/screen-assistant/01-study-desk.webp",
@@ -138,6 +182,10 @@ export const projects: Project[] = [
     approach: "Electron and React power the desktop workspace. A typed preload bridge connects the sandboxed interface to screen capture, local Tesseract.js OCR, encrypted credential storage, and streamed OpenRouter requests.",
     tech: ["Electron", "React", "TypeScript", "Tesseract.js", "OpenRouter"],
     repository: { url: "https://github.com/jaesmade/Screen-Assistant" },
+    download: {
+      url: "https://github.com/jaesmade/Screen-Assistant/releases/download/v0.2.0/Study-Desk-0.2.0-Setup-x64.exe",
+      label: "Download for Windows",
+    },
     // Content verified against the local screen-assistant README and renderer/main source.
     details: [
       {

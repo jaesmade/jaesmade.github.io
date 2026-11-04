@@ -15,6 +15,7 @@ const projectCategories = ["All", "Web", "AI / Data", "Systems"].filter(
   (category) => category === "All" || projects.some((project) => project.category === category),
 );
 const projectIcons: Record<string, string> = {
+  "Excel Workbook Splitter & Merger": "spreadsheet",
   SkillDis: "people",
   "Municipal Siniloan Website": "web",
 };
@@ -36,6 +37,8 @@ function Icon({ name }: { name: string }) {
     portfolio: "M3 7h18v14H3ZM8 7V3h8v4M3 12h18M10 12v3h4v-3",
     folder: "M3 5h5V4h4v2h9v14H3ZM3 9h18",
     resume: "M14 2H5v20h14V7ZM14 2v6h5M8 12h8M8 16h8",
+    download: "M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5",
+    spreadsheet: "M4 3h16v18H4ZM4 8h16M4 13h16M4 18h16M10 8v13M15 8v13",
     certificate: "M4 3h16v14H4ZM8 7h8M8 11h3M14 15l-2 7 4-2 4 2-2-7M19 13a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z",
     contact: "M3 5h18v14H3ZM3 5l9 8 9-8",
     close: "M5 5l14 14M19 5 5 19",
@@ -86,7 +89,7 @@ function ProjectIcon({ project }: { project: Project }) {
     ? <img className="project-brand-icon" src={`${import.meta.env.BASE_URL}${project.icon}`} width="32" height="32" alt="" aria-hidden="true" />
     : <Icon name={projectIcons[project.title] || "portfolio"} />;
 }
-function ProjectImage({ project, loading = "lazy" }: { project: Pick<Project, "title" | "image" | "imageAlt">; loading?: "lazy" | "eager" }) {
+function ProjectImage({ project, loading = "lazy", onLoad }: { project: Pick<Project, "title" | "image" | "imageAlt">; loading?: "lazy" | "eager"; onLoad?: (image: HTMLImageElement) => void }) {
   return (
     <img
       src={`${import.meta.env.BASE_URL}${project.image}`}
@@ -95,6 +98,7 @@ function ProjectImage({ project, loading = "lazy" }: { project: Pick<Project, "t
       height="720"
       loading={loading}
       decoding="async"
+      onLoad={(event) => onLoad?.(event.currentTarget)}
       onError={(event) => {
         const fallback = `${import.meta.env.BASE_URL}projects/placeholder.svg`;
         if (event.currentTarget.getAttribute("src") !== fallback) {
@@ -107,12 +111,24 @@ function ProjectImage({ project, loading = "lazy" }: { project: Pick<Project, "t
 }
 function ProjectGallery({ project }: { project: Project }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const screenshots = project.screenshots;
+  const source = screenshots?.[activeIndex]?.src ?? project.image;
+  const [loadedImage, setLoadedImage] = useState({ src: "", ratio: 16 / 9 });
+  const imageAspectRatio = loadedImage.src === source ? loadedImage.ratio : 16 / 9;
+  const mediaStyle = {
+    "--screenshot-top-inset": `${50 * Math.max(0, 1 - (16 / 9) / imageAspectRatio)}%`,
+    "--screenshot-right-inset": `${50 * Math.max(0, 1 - imageAspectRatio / (16 / 9))}%`,
+  } as CSSProperties;
+  const onImageLoad = (image: HTMLImageElement) => {
+    if (image.naturalHeight) setLoadedImage({ src: source, ratio: image.naturalWidth / image.naturalHeight });
+  };
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   if (!screenshots?.length) {
     return <div className="project-gallery">
-      <div className="project-dialog-media"><ProjectImage project={project} loading="eager" /></div>
-      <ScreenshotViewer src={`${import.meta.env.BASE_URL}${project.image}`} alt={project.imageAlt} title={project.title} />
+      <div className="project-dialog-media" style={mediaStyle}>
+        <ProjectImage project={project} loading="eager" onLoad={onImageLoad} />
+        <ScreenshotViewer src={`${import.meta.env.BASE_URL}${project.image}`} alt={project.imageAlt} title={project.title} />
+      </div>
     </div>;
   }
   const current = screenshots[activeIndex];
@@ -136,6 +152,7 @@ function ProjectGallery({ project }: { project: Project }) {
     >
       <div
         className="project-dialog-media"
+        style={mediaStyle}
         onTouchStart={(event) => {
           const touch = event.touches[0];
           touchStart.current = event.touches.length === 1 ? { x: touch.clientX, y: touch.clientY } : null;
@@ -150,7 +167,8 @@ function ProjectGallery({ project }: { project: Project }) {
           if (Math.abs(distance) > 50 && Math.abs(distance) > Math.abs(touch.clientY - start.y)) move(distance < 0 ? 1 : -1);
         }}
       >
-        <ProjectImage key={current.src} project={{ title: project.title, image: current.src, imageAlt: current.alt }} loading="eager" />
+        <ProjectImage key={current.src} project={{ title: project.title, image: current.src, imageAlt: current.alt }} loading="eager" onLoad={onImageLoad} />
+        <ScreenshotViewer src={`${import.meta.env.BASE_URL}${current.src}`} alt={current.alt} title={`${project.title} — ${current.caption}`} />
       </div>
       {screenshots.length > 1 && <div className="project-gallery-controls">
         <button type="button" aria-label="Previous screenshot" onClick={() => move(-1)}><Icon name="previous" /></button>
@@ -160,7 +178,6 @@ function ProjectGallery({ project }: { project: Project }) {
         </div>
         <button type="button" aria-label="Next screenshot" onClick={() => move(1)}><Icon name="next" /></button>
       </div>}
-      <ScreenshotViewer src={`${import.meta.env.BASE_URL}${current.src}`} alt={current.alt} title={`${project.title} — ${current.caption}`} />
     </div>
   );
 }
@@ -278,12 +295,18 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
             tabIndex={0}
             hidden={activeTab !== "explore"}
           >
-            {(project.repository || project.liveUrl) && (
+            {(project.repository || project.download || project.liveUrl) && (
               <div className="project-dialog-links" aria-label="Project links">
                 {project.repository && (
                   <a className="primary-button" href={project.repository.url} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} GitHub repository (opens in a new tab)`}>
                     <SocialIcon name="GitHub" />
                     GitHub repository
+                  </a>
+                )}
+                {project.download && (
+                  <a className="secondary-button" href={project.download.url} aria-label={`${project.title}: ${project.download.label} (EXE)`}>
+                    <Icon name="download" />
+                    {project.download.label}
                   </a>
                 )}
                 {project.liveUrl && (
@@ -362,6 +385,12 @@ function ProjectPreview({ project, onOpen }: {
             <a className="secondary-button" href={project.repository.url} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} GitHub repository (opens in a new tab)`}>
               <SocialIcon name="GitHub" />
               GitHub
+            </a>
+          )}
+          {project.download && (
+            <a className="secondary-button" href={project.download.url} aria-label={`${project.title}: ${project.download.label} (EXE)`}>
+              <Icon name="download" />
+              {project.download.label}
             </a>
           )}
           {project.liveUrl && (

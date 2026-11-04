@@ -544,8 +544,8 @@ main:focus { outline: none; }
 .project-preview-icon { display: grid; place-items: center; flex-shrink: 0; width: 32px; height: 32px; }
 .project-preview-icon svg { width: 30px; height: 30px; stroke-width: 1.8; }
 .project-preview-category { margin: var(--space-2) 0 0; font-size: 13px; line-height: 1.5; }
-.project-preview-media { align-self: start; aspect-ratio: 16 / 9; min-width: 0; overflow: hidden; background: var(--tone-soft); }
-.project-preview-media img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.project-preview-media { position: relative; align-self: start; aspect-ratio: 16 / 9; min-width: 0; overflow: hidden; background: transparent; }
+.project-preview-media img { position: absolute; inset: 0; display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; margin: auto; padding: var(--space-1); border: 1px solid var(--line); object-fit: contain; }
 .project-preview-content { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-5); min-width: 0; }
 .project-preview-description { margin: 0; font-size: 16px; line-height: 1.7; }
 .project-preview-role { margin: 0; color: var(--ink); font-size: 14px; line-height: 1.6; }
@@ -594,8 +594,8 @@ main:focus { outline: none; }
 .project-tabpanel:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .project-tabpanel[hidden] { display: none; }
 .project-overview { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: start; gap: var(--space-6); }
-.project-dialog-media { position: relative; aspect-ratio: 16 / 9; min-width: 0; overflow: hidden; background: var(--tone-soft); }
-.project-dialog-media img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
+.project-dialog-media { position: relative; aspect-ratio: 16 / 9; min-width: 0; overflow: hidden; background: transparent; }
+.project-dialog-media img { position: absolute; inset: 0; display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; margin: auto; padding: var(--space-1); border: 1px solid var(--line); object-fit: contain; }
 .project-gallery { min-width: 0; }
 .project-gallery:focus-visible { outline-offset: 3px; }
 .project-gallery-controls { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-3); }
