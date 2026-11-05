@@ -1,9 +1,10 @@
 import { Fragment, useEffect, useRef, useState, type CSSProperties } from "react";
-import { profile, projects, type Project } from "./data/portfolio";
+import { home, profile, projects, type Project } from "./data/portfolio";
 import ToolboxIcon from "./components/ToolboxIcon";
 import ScreenshotViewer from "./components/ScreenshotViewer";
+import FeaturedProjects from "./components/FeaturedProjects";
 import "./index.css";
-const pages = ["home", "about", "portfolio", "contact"] as const;
+const pages = ["home", "portfolio", "about", "contact"] as const;
 type Page = (typeof pages)[number];
 const pageLabels: Record<Page, string> = {
   home: "Home",
@@ -11,7 +12,7 @@ const pageLabels: Record<Page, string> = {
   portfolio: "Projects",
   contact: "Contact",
 };
-const projectCategories = ["All", "Web", "AI / Data", "Systems"].filter(
+const projectCategories = ["All", "Web", "Automation", "AI / Data", "Systems"].filter(
   (category) => category === "All" || projects.some((project) => project.category === category),
 );
 const projectIcons: Record<string, string> = {
@@ -80,9 +81,6 @@ function SocialIcon({ name }: { name: string }) {
       <path d={paths[name]} />
     </svg>
   );
-}
-function Divider() {
-  return <div className="divider" aria-hidden="true" />;
 }
 function ProjectIcon({ project }: { project: Project }) {
   return project.icon
@@ -271,13 +269,23 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
           >
             <ProjectGallery project={project} />
             <div className="project-overview-copy">
-              <h3>{project.contribution ? "My contribution" : "Overview"}</h3>
-              <p>{project.contribution ?? project.description}</p>
+              {project.contribution && <>
+                <h3>My contribution</h3>
+                <p>{project.contribution}</p>
+              </>}
+              {project.approach && <>
+                <h3>Technical approach</h3>
+                <p>{project.approach}</p>
+              </>}
+              {!project.contribution && !project.approach && <>
+                <h3>Overview</h3>
+                <p>{project.description}</p>
+              </>}
               <button className="project-details-link" type="button" onClick={() => {
                 setActiveTab("explore");
                 tabRefs.current[1]?.focus();
               }}>
-                Read the project details
+                Details &amp; links
               </button>
             </div>
             <div className="project-dialog-tech">
@@ -298,19 +306,19 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
             {(project.repository || project.download || project.liveUrl) && (
               <div className="project-dialog-links" aria-label="Project links">
                 {project.repository && (
-                  <a className="primary-button" href={project.repository.url} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} GitHub repository (opens in a new tab)`}>
+                  <a className="secondary-button" href={project.repository.url} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} GitHub repository (opens in a new tab)`}>
                     <SocialIcon name="GitHub" />
-                    GitHub repository
+                    GitHub
                   </a>
                 )}
                 {project.download && (
-                  <a className="secondary-button" href={project.download.url} aria-label={`${project.title}: ${project.download.label} (EXE)`}>
+                  <a className="secondary-button" href={project.download.url} aria-label={`${project.title}: ${project.download.label}`}>
                     <Icon name="download" />
                     {project.download.label}
                   </a>
                 )}
                 {project.liveUrl && (
-                  <a className="project-website-link" href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} live website (opens in a new tab)`}>
+                  <a className="secondary-button" href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`${project.title} live website (opens in a new tab)`}>
                     <Icon name="web" />
                     Live website
                   </a>
@@ -318,10 +326,6 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
               </div>
             )}
             <div className="project-explanation">
-              {project.approach && <section>
-                <h3>Technical approach</h3>
-                <p>{project.approach}</p>
-              </section>}
               {project.details.map((detail) => {
                 const content = <>
                   {detail.body && <p>{detail.body}</p>}
@@ -388,7 +392,7 @@ function ProjectPreview({ project, onOpen }: {
             </a>
           )}
           {project.download && (
-            <a className="secondary-button" href={project.download.url} aria-label={`${project.title}: ${project.download.label} (EXE)`}>
+            <a className="secondary-button" href={project.download.url} aria-label={`${project.title}: ${project.download.label}`}>
               <Icon name="download" />
               {project.download.label}
             </a>
@@ -403,11 +407,11 @@ function ProjectPreview({ project, onOpen }: {
             className="primary-button project-details-action"
             type="button"
             aria-haspopup="dialog"
-            aria-label={`View details for ${project.title}`}
+            aria-label={`View project: ${project.title}`}
             onClick={(event) => onOpen(project, event.currentTarget)}
           >
             <Icon name="folder" />
-            View details
+            View project
           </button>
         </div>
       </div>
@@ -416,7 +420,6 @@ function ProjectPreview({ project, onOpen }: {
 }
 export default function App() {
   const [page, setPage] = useState<Page>(getPage);
-  const [activeHomeItem, setActiveHomeItem] = useState("about");
   const [filter, setFilter] = useState("All");
   const [activeProjectTitle, setActiveProjectTitle] = useState(projects[0]?.title ?? "");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -427,6 +430,9 @@ export default function App() {
   const [theme, setTheme] = useState(() => {
     return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
   });
+  const featuredProjects = home.featuredProjects === "all"
+    ? projects
+    : projects.filter((project) => home.featuredProjects.includes(project.title));
   const visibleProjects = projects.filter((project) => filter === "All" || project.category === filter);
   const activeProject = visibleProjects.find((project) => project.title === activeProjectTitle) ?? visibleProjects[0];
   const openProject = (project: Project, trigger: HTMLButtonElement) => {
@@ -485,88 +491,63 @@ export default function App() {
           </div>
           <main ref={mainRef} id="main" aria-label={pageLabels[page]} className={page === "home" ? "home-main" : undefined} tabIndex={-1}>
             {page === "home" ? (
-              <section className="home-layout">
-                <div className="intro">
-                  <h1>
-                    Hey, I'm
-                    <br />
-                    <span className="name-highlight">{profile.firstName}.</span>
-                  </h1>
-                  <p className="intro-copy">{profile.intro}</p>
-                  <Divider />
-                  <div className="social-row">
-                    <span>FIND ME ELSEWHERE</span>
-                    {profile.socials.map((s) => (
-                      <a
-                        key={s.label}
-                        href={s.url}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <SocialIcon name={s.label} />
-                        {s.label}
+              <div className="home-content">
+                <section className="home-layout" aria-label="Introduction and featured work">
+                  <div className="intro">
+                    <h1>
+                      Hey, I'm
+                      <br />
+                      <span className="name-highlight">{profile.firstName}.</span>
+                    </h1>
+                    <p className="intro-location">Developer <span aria-hidden="true">·</span> {profile.location}</p>
+                    <p className="intro-copy">{profile.intro}</p>
+                    <div className="home-actions">
+                      <a className="primary-button home-projects-action" href="#portfolio">
+                        View projects
                       </a>
-                    ))}
+                      <a className="secondary-button home-resume-action"
+                        href={`${import.meta.env.BASE_URL}Josh-Andrew-Esmade-Resume.pdf`}
+                        download="Josh-Andrew-Esmade-Resume.pdf">
+                        <Icon name="download" />Download résumé<span className="resume-format">PDF</span>
+                      </a>
+                    </div>
+                    <div className="social-row">
+                      {profile.socials.filter((social) => social.label !== "Facebook").map((social) => (
+                        <a key={social.label} href={social.url} target="_blank" rel="noreferrer">
+                          <SocialIcon name={social.label} />{social.label}
+                        </a>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <nav className="card-nav" aria-label="Explore portfolio">
-                    {[
-                      {
-                        id: "about",
-                        title: "About me",
-                        detail: "Profile, skills & résumé",
-                        color: "tone-warm",
-                      },
-                      {
-                        id: "portfolio",
-                        title: "My projects",
-                        detail: "Selected work & source code",
-                        color: "tone-cool",
-                      },
-                      {
-                        id: "contact",
-                        title: "Contact",
-                        detail: "Projects & opportunities",
-                        color: "tone-soft",
-                      },
-                    ].map((item) => (
-                      <a
-                        className={`nav-card ${item.color}${activeHomeItem === item.id ? " is-selected" : ""}`}
-                        href={`#${item.id}`}
-                        key={item.id}
-                        onPointerEnter={() => setActiveHomeItem(item.id)}
-                        onFocus={() => setActiveHomeItem(item.id)}
-                      >
-                        <span className="card-icon">
-                          <Icon name={item.id} />
-                        </span>
-                        <span>
-                          <strong>{item.title}</strong>
-                          <small>{item.detail}</small>
-                        </span>
-                      </a>
-                    ))}
-                </nav>
-              </section>
+                  <FeaturedProjects
+                    projects={featuredProjects}
+                    intervalMs={home.rotationIntervalMs}
+                    suspended={selectedProject !== null}
+                    renderImage={(project) => <ProjectImage project={project} loading="eager" />}
+                    onOpen={openProject}
+                  />
+                </section>
+              </div>
             ) : (
               <section className={`inner-page${page === "portfolio" ? " projects-page" : ""}`} key={page}>
-                <a className="back-link" href="#home" aria-label="Back to home" title="Back to home">
-                  <Icon name="back" />
-                </a>
-                <div className={page === "portfolio" ? "projects-heading" : undefined}>
-                  <h1>
-                    {
+                <header className="page-heading">
+                  <a className="back-link" href="#home" aria-label="Back to home" title="Back to home">
+                    <Icon name="back" />
+                  </a>
+                  <div className="page-heading-copy">
+                    <h1>
                       {
-                        about: "About me",
-                        portfolio: "Projects",
-                        contact: "Contact",
-                        home: "",
-                      }[page]
-                    }
-                  </h1>
-                  {page === "portfolio" && <p>A selection of applications, experiments, and systems.</p>}
-                </div>
-                <Divider />
+                        {
+                          about: "About me",
+                          portfolio: "Projects",
+                          contact: "Contact",
+                          home: "",
+                        }[page]
+                      }
+                    </h1>
+                    {page === "portfolio" && <p>A selection of applications, experiments, and systems.</p>}
+                  </div>
+                </header>
                 {page === "about" && (
                   <>
                     <div className="about-grid">
@@ -588,14 +569,14 @@ export default function App() {
                           <li><Icon name="status" /><span>{profile.status}</span></li>
                         </ul>
                         <a
-                          className="nav-card resume-download"
+                          className="resume-download"
                           href={`${import.meta.env.BASE_URL}Josh-Andrew-Esmade-Resume.pdf`}
                           download="Josh-Andrew-Esmade-Resume.pdf"
                         >
-                          <span className="card-icon"><Icon name="resume" /></span>
+                          <span className="resume-download-icon"><Icon name="resume" /></span>
                           <span className="resume-download-copy">
                             <strong>Download résumé</strong>
-                            <small>(PDF)</small>
+                            <small className="resume-format">(PDF)</small>
                           </span>
                         </a>
                       </div>
@@ -618,7 +599,7 @@ export default function App() {
                         </section>
                         <div className="about-actions">
                           <a className="primary-button" href="#portfolio">
-                            Explore my projects
+                            View projects
                             <Icon name="portfolio" />
                           </a>
                         </div>

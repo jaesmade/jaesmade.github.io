@@ -1,0 +1,13 @@
+{
+  "origin": "User-provided screenshot of the Facebook Media Downloader desktop app",
+  "originalFilename": "fbdl.PNG",
+  "repository": "https://github.com/jaesmade/facebook-media-scraper",
+  "providedAt": "2026-11-06",
+  "dimensions": {
+    "width": 991,
+    "height": 748
+  },
+  "sampleData": false,
+  "captureContext": "User-supplied initial desktop screen with an empty Facebook link, no scan results, and no download folder selected.",
+  "conversion": "Lossless WebP converted from the supplied unaltered PNG; original dimensions preserved and decoded RGBA pixels verified identical."
+}

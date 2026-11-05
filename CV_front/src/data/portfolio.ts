@@ -27,7 +27,7 @@ export const profile = {
   email: "jaesmade@gmail.com",
   status: "Open to opportunities",
   intro:
-    "I build web applications and intelligent systems.",
+    "I build web apps and automation tools that simplify everyday work.",
   about: [
     "I’m an automation enthusiast and a Computer Science graduate specializing in Intelligent Systems from Laguna State Polytechnic University. I’m drawn to finding simpler ways to get things done through code.",
     "I enjoy exploring browser automation, scripting, and data workflows to take the repetition out of everyday tasks. My goal is to build practical, reliable tools that save time and let people focus on work that needs their attention.",
@@ -221,6 +221,98 @@ export const projects: Project[] = [
     ],
   },
   {
+    title: "Gaylingua",
+    image: "projects/gaylingua/01-translate.webp",
+    imageAlt: "Gaylingua’s Translate screen showing the daily Swardspeak word and the Filipino and English phrase input",
+    icon: "projects/gaylingua/gaylingua-mark.svg",
+    category: "Web",
+    description:
+      "An installable web app for learning Swardspeak, also called Filipino gay lingo. Translate Filipino and English phrases, explore a searchable dictionary, and practice with a quiz or matching game.",
+    approach: "The translator matches curated phrases and substitutes supported words using a local dictionary. A service worker caches the app for offline use after the first visit, and Capacitor packages it for Android.",
+    tech: ["HTML", "CSS", "JavaScript", "Service Worker", "Capacitor"],
+    repository: { url: "https://github.com/jaesmade/Gaylingua" },
+    download: {
+      url: "https://github.com/jaesmade/Gaylingua/releases/download/translator/gaylingua.apk",
+      label: "Download for Android (APK)",
+    },
+    details: [
+      {
+        heading: "Translate and explore",
+        body: "Look up words and alternate spellings in a 104-entry Swardspeak dictionary. Save favorites in the browser and use read-aloud on devices that support speech synthesis.",
+      },
+      {
+        heading: "Practice vocabulary",
+        body: "Earn XP by answering a five-question quiz or completing a four-pair matching game. The translator, dictionary, and games work offline after the app has cached its files.",
+      },
+    ],
+  },
+  {
+    title: "Facebook Media Scraper",
+    image: "projects/facebook-media-scraper/01-desktop.webp",
+    imageAlt: "Facebook Media Downloader desktop app showing Facebook link input, date and media filters, download results, and folder selection",
+    category: "Automation",
+    description:
+      "A Python desktop tool used by the tourism office to download reference videos from other Facebook pages, with date filters, media selection, and downloads organized by month.",
+    contribution: "Used by the tourism office to download reference videos from other Facebook pages.",
+    approach: "Tkinter provides the desktop interface, Playwright scans Facebook for accessible media, and yt-dlp handles video downloads. Scanning and downloading run on background threads to keep the interface responsive.",
+    tech: ["Python", "Tkinter", "Playwright", "yt-dlp"],
+    repository: { url: "https://github.com/jaesmade/facebook-media-scraper" },
+    // Details & links content follows the local facebook_scraper/README.md.
+    details: [
+      {
+        heading: "About the project",
+        body: "A Python media scraper with a Windows desktop interface and a command-line script. It uses Playwright Chromium and yt-dlp to download photos and videos visible on a Facebook page. The Tkinter app adds optional sign-in, scanning, filtering, and download selection. Use a page you have permission to scrape.",
+      },
+      {
+        heading: "Desktop workflow",
+        ordered: true,
+        items: [
+          "Optionally sign in, paste a Facebook page, post, or media link, and click Scan media. Enable Scan older posts to check the page's history.",
+          "Choose From date and Through date, or enter dates as YYYY-MM-DD. Set both to the same day for an exact match. Filter by videos or photos; Include undated in range adds items without a readable date when a date filter is active.",
+          "Browse to an existing download folder, then choose Download matches or select rows and choose Download selected. Files are grouped into yyyy-mm folders, with undated for items without a post date.",
+        ],
+      },
+      {
+        heading: "Scanning and exports",
+        body: "For a page URL, the scraper scans the main feed, Photos, public photo albums, Videos, and Reels, scrolling until Facebook stops loading more media and combining the results. A tab URL scans only that section.",
+        items: [
+          "media.csv and media.json record media type, Facebook permalink, direct media URL, image alt text, and post date when available. Downloaded entries include a file path relative to the output folder.",
+          "The command-line default is output/ beside scrape.py, with downloads in output/media/. Downloads are grouped by post month.",
+          "If a direct download fails, the scraper opens the photo's permalink or passes the video's permalink to yt-dlp. FFmpeg and FFprobe on PATH allow separate video and audio streams to be combined; otherwise, yt-dlp uses a format containing both.",
+        ],
+      },
+      {
+        heading: "Sign-in and history",
+        body: "Facebook can limit the history visible to a logged-out browser. Signing in can provide more access to older posts, but does not guarantee every file is available. The scraper can only download media Facebook makes available to that session; inaccessible months can still have gaps, and direct CDN links can expire.",
+        items: [
+          "History scans use the Page Transparency creation date and Facebook timeline filters to check each month through the current month. Older pages can take time to scan.",
+          "history.json records the dates and links found, stopping points, and scan errors. Check download_status in the media exports for entries that could not be saved.",
+          "The Windows app saves its optional session under the current user's Local AppData folder. Source runs save .facebook-session.json beside the script. Keep the session private and sign in again if it expires.",
+        ],
+      },
+      {
+        heading: "Run from source",
+        collapsible: true,
+        body: "From the repository folder in PowerShell, create the environment, install the dependencies and Chromium browser, then launch the desktop interface:",
+        code: "python -m venv .venv\n.\\.venv\\Scripts\\python.exe -m pip install -r requirements.txt\n.\\.venv\\Scripts\\python.exe -m playwright install chromium\n.\\.venv\\Scripts\\python.exe -B app.py",
+      },
+      {
+        heading: "Standalone Windows app",
+        collapsible: true,
+        body: "Run the build script from PowerShell:",
+        code: ".\\build-windows.ps1",
+        after: "The build creates release\\FacebookMediaDownloader\\FacebookMediaDownloader.exe. Open the executable or launch-app.cmd. Copy the entire FacebookMediaDownloader folder when moving it to another PC: it includes Python, dependencies, and the matching Chromium browser, so no separate Python installation is needed. The release folder is around 900 MB.",
+      },
+      {
+        heading: "Command-line usage",
+        collapsible: true,
+        body: "Replace PAGE_NAME with a page's actual name. Download a page's available media, or target its videos tab with a limit of 20 scrolls:",
+        code: ".\\.venv\\Scripts\\python.exe scrape.py \"https://www.facebook.com/PAGE_NAME\" --download\n.\\.venv\\Scripts\\python.exe scrape.py \"https://www.facebook.com/PAGE_NAME/videos\" --output videos --scrolls 20 --download",
+        after: "Use --headed to see the browser or increase --wait-ms for slower loads. For older posts, save a session with scrape.py --login, then add --history --session --download to the page scan.",
+      },
+    ],
+  },
+  {
     title: "HITOVEST",
     image: "projects/hitovest/01-home.webp",
     imageAlt: "HITOVEST homepage introducing its catfish farming tools and supplier network",
@@ -383,3 +475,9 @@ export const projects: Project[] = [
     ],
   },
 ];
+
+// Homepage editorial choices reference real projects in the portfolio above.
+export const home = {
+  featuredProjects: "all" as "all" | string[],
+  rotationIntervalMs: 6000,
+};

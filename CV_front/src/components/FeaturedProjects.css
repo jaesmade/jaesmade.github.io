@@ -1,0 +1,142 @@
+/* Every project contributes to the shared rows, including while it is invisible. */
+.home-feature-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: repeat(5, auto);
+  row-gap: var(--space-2);
+}
+
+.home-feature-stage .home-feature-slide {
+  display: grid;
+  grid-column: 1;
+  grid-row: 1 / span 5;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: subgrid;
+  row-gap: var(--space-2);
+  align-items: start;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 400ms;
+}
+
+.home-feature-stage .home-feature-slide.is-active {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.home-feature-stage .home-feature-media {
+  height: clamp(240px, 22vw, 296px);
+  min-width: 0;
+  margin: var(--space-3) 0 var(--space-2);
+  padding: var(--media-padding);
+  border: 1px solid var(--line-soft);
+  background: var(--tone-soft);
+}
+
+.home-feature-stage .home-feature-media img {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
+.home-feature-stage .home-feature-slide h3 {
+  margin: 0;
+  font-size: clamp(18px, 1.55vw, 20px);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.home-feature-stage .home-feature-slide > p {
+  margin: 0;
+  font-size: var(--type-small);
+  line-height: var(--reading-leading);
+  color: var(--muted);
+}
+
+.home-feature-stage .home-feature-tech {
+  gap: var(--space-1) var(--space-4);
+  padding-top: var(--space-1);
+  font-size: var(--type-label);
+  line-height: 1.6;
+}
+
+.home-feature-stage .home-feature-action {
+  justify-self: start;
+  min-height: var(--control-height-compact);
+  text-decoration-thickness: 1px;
+  text-underline-offset: var(--space-1);
+}
+
+.home-feature-rotator .home-feature-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line-soft);
+  font-size: var(--control-font-size);
+}
+
+.home-feature-controls .home-feature-count {
+  min-width: 6ch;
+  margin-right: auto;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.home-feature-rotator .home-feature-controls button {
+  min-width: var(--control-height-compact);
+  min-height: var(--control-height-compact);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.home-feature-rotator .home-feature-controls button:hover {
+  border-color: var(--ink);
+  background: var(--tone-cool);
+}
+
+/* Same-cell overlap still reserves the tallest complete slide in older browsers. */
+@supports not (grid-template-rows: subgrid) {
+  .home-feature-stage { grid-template-rows: auto; }
+  .home-feature-stage .home-feature-slide {
+    grid-row: 1;
+    grid-template-rows: repeat(5, auto);
+    align-content: start;
+  }
+}
+
+@media (max-width: 850px) {
+  .home-feature-stage .home-feature-media { height: clamp(208px, 54vw, 296px); }
+}
+
+@media (max-width: 600px) {
+  .home-feature-stage .home-feature-media { max-height: 280px; }
+  .home-feature-stage .home-feature-slide h3 { font-size: 18px; }
+  .home-feature-rotator .home-feature-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    gap: var(--space-2);
+  }
+  .home-feature-controls .home-feature-count {
+    grid-column: 1 / -1;
+    margin-right: 0;
+    font-size: var(--type-label);
+  }
+  .home-feature-rotator .home-feature-controls button { padding-inline: var(--space-2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-feature-stage .home-feature-slide { transition: none; }
+}
