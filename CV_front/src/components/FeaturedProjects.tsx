@@ -6,9 +6,27 @@ type FeaturedProjectsProps = {
   projects: Project[];
   intervalMs?: number;
   suspended?: boolean;
-  renderImage: (project: Project) => ReactNode;
+  renderImage: (project: Project, onLoad: () => void, onError: () => void) => ReactNode;
   onOpen: (project: Project, trigger: HTMLButtonElement) => void;
 };
+
+function FeaturedProjectMedia({ project, renderImage }: {
+  project: Project;
+  renderImage: FeaturedProjectsProps["renderImage"];
+}) {
+  const [state, setState] = useState<"loading" | "loaded" | "failed">("loading");
+
+  return (
+    <div className={`home-feature-media is-${state}`} aria-busy={state === "loading"}>
+      {renderImage(project, () => setState("loaded"), () => setState("failed"))}
+      {state !== "loaded" && (
+        <span className="home-feature-media-message">
+          {state === "loading" ? "Loading screenshot…" : "Screenshot unavailable"}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function FeaturedProjects({
   projects,
@@ -97,9 +115,9 @@ export default function FeaturedProjects({
               aria-hidden={!active}
               inert={!active}
             >
-              <div className="home-feature-media">
-                {(active || index === (visibleIndex + 1) % count || visitedProjects.has(project.title)) && renderImage(project)}
-              </div>
+              {(active || index === (visibleIndex + 1) % count || visitedProjects.has(project.title))
+                ? <FeaturedProjectMedia project={project} renderImage={renderImage} />
+                : <div className="home-feature-media" />}
               <h3 id={titleId}>{project.title}</h3>
               <p>{project.description}</p>
               <ul className="home-feature-tech" aria-label={`${project.title} technologies`}>

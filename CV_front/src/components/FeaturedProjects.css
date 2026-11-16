@@ -42,12 +42,29 @@
 }
 
 .home-feature-stage .home-feature-media {
+  position: relative;
   height: clamp(240px, 22vw, 296px);
   min-width: 0;
   margin: var(--space-3) 0 var(--space-2);
   padding: var(--media-padding);
   border: 1px solid var(--line-soft);
   background: var(--tone-soft);
+}
+
+.home-feature-stage .home-feature-media.is-loading img,
+.home-feature-stage .home-feature-media.is-failed img {
+  visibility: hidden;
+}
+
+.home-feature-media-message {
+  position: absolute;
+  inset: var(--media-padding);
+  display: grid;
+  place-items: center;
+  padding: var(--space-3);
+  color: var(--muted);
+  font-size: var(--type-small);
+  text-align: center;
 }
 
 .home-feature-stage .home-feature-media img {

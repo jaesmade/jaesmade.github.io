@@ -87,7 +87,7 @@ function ProjectIcon({ project }: { project: Project }) {
     ? <img className="project-brand-icon" src={`${import.meta.env.BASE_URL}${project.icon}`} width="32" height="32" alt="" aria-hidden="true" />
     : <Icon name={projectIcons[project.title] || "portfolio"} />;
 }
-function ProjectImage({ project, loading = "lazy", onLoad }: { project: Pick<Project, "title" | "image" | "imageAlt">; loading?: "lazy" | "eager"; onLoad?: (image: HTMLImageElement) => void }) {
+function ProjectImage({ project, loading = "lazy", onLoad, onError }: { project: Pick<Project, "title" | "image" | "imageAlt">; loading?: "lazy" | "eager"; onLoad?: (image: HTMLImageElement) => void; onError?: () => void }) {
   return (
     <img
       src={`${import.meta.env.BASE_URL}${project.image}`}
@@ -98,6 +98,7 @@ function ProjectImage({ project, loading = "lazy", onLoad }: { project: Pick<Pro
       decoding="async"
       onLoad={(event) => onLoad?.(event.currentTarget)}
       onError={(event) => {
+        onError?.();
         const fallback = `${import.meta.env.BASE_URL}projects/placeholder.svg`;
         if (event.currentTarget.getAttribute("src") !== fallback) {
           event.currentTarget.src = fallback;
@@ -526,7 +527,7 @@ export default function App() {
                     projects={featuredProjects}
                     intervalMs={home.rotationIntervalMs}
                     suspended={selectedProject !== null}
-                    renderImage={(project) => <ProjectImage project={project} loading="eager" />}
+                    renderImage={(project, onLoad, onError) => <ProjectImage project={project} loading="eager" onLoad={onLoad} onError={onError} />}
                     onOpen={openProject}
                   />
                 </section>
