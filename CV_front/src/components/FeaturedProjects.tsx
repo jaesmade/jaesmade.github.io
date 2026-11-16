@@ -20,6 +20,7 @@ export default function FeaturedProjects({
   const id = useId();
   const sectionRef = useRef<HTMLElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [visitedProjects, setVisitedProjects] = useState(() => new Set<string>());
   const [announcement, setAnnouncement] = useState("");
   const [paused, setPaused] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [hovered, setHovered] = useState(false);
@@ -56,11 +57,12 @@ export default function FeaturedProjects({
   useEffect(() => {
     if (count < 2 || paused || hovered || focused || suspended || !documentVisible || !inView) return;
     const timeout = window.setTimeout(() => {
+      setVisitedProjects((visited) => new Set(visited).add(projects[visibleIndex].title));
       setAnnouncement("");
       setActiveIndex((index) => (index + 1) % count);
     }, intervalMs);
     return () => window.clearTimeout(timeout);
-  }, [activeIndex, count, intervalMs, paused, hovered, focused, suspended, documentVisible, inView]);
+  }, [activeIndex, count, intervalMs, paused, hovered, focused, suspended, documentVisible, inView, projects, visibleIndex]);
 
   if (!count) return null;
 
@@ -95,7 +97,9 @@ export default function FeaturedProjects({
               aria-hidden={!active}
               inert={!active}
             >
-              <div className="home-feature-media">{renderImage(project)}</div>
+              <div className="home-feature-media">
+                {(active || index === (visibleIndex + 1) % count || visitedProjects.has(project.title)) && renderImage(project)}
+              </div>
               <h3 id={titleId}>{project.title}</h3>
               <p>{project.description}</p>
               <ul className="home-feature-tech" aria-label={`${project.title} technologies`}>
@@ -130,6 +134,7 @@ export default function FeaturedProjects({
           </button>
           <button type="button" onClick={() => {
             const nextIndex = (visibleIndex + 1) % count;
+            setVisitedProjects((visited) => new Set(visited).add(projects[visibleIndex].title));
             setActiveIndex(nextIndex);
             setAnnouncement(`${projects[nextIndex].title}, project ${nextIndex + 1} of ${count}`);
           }}>

@@ -424,7 +424,7 @@ export const projects: Project[] = [
     title: "Municipal Siniloan Website",
     image: "projects/siniloan/01-home.webp",
     imageAlt: "Municipality of Siniloan official website homepage with municipal hall and government services",
-    icon: "projects/siniloan/siniloan-seal.svg",
+    icon: "projects/siniloan/siniloan-seal-icon.webp",
     liveUrl: "https://siniloanlaguna.gov.ph/",
     screenshots: [
       { src: "projects/siniloan/01-home.webp", alt: "Siniloan official website homepage and service shortcuts", caption: "Homepage" },
