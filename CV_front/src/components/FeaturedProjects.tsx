@@ -20,6 +20,7 @@ export default function FeaturedProjects({
   const id = useId();
   const sectionRef = useRef<HTMLElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [announcement, setAnnouncement] = useState("");
   const [paused, setPaused] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -55,6 +56,7 @@ export default function FeaturedProjects({
   useEffect(() => {
     if (count < 2 || paused || hovered || focused || suspended || !documentVisible || !inView) return;
     const timeout = window.setTimeout(() => {
+      setAnnouncement("");
       setActiveIndex((index) => (index + 1) % count);
     }, intervalMs);
     return () => window.clearTimeout(timeout);
@@ -113,6 +115,7 @@ export default function FeaturedProjects({
           );
         })}
       </div>
+      <span className="home-feature-announcement" role="status" aria-live="polite" aria-atomic="true">{announcement}</span>
       {count > 1 && (
         <div className="home-feature-controls">
           <span className="home-feature-count" aria-label={`Project ${visibleIndex + 1} of ${count}`}>
@@ -125,7 +128,11 @@ export default function FeaturedProjects({
           >
             {paused ? "Resume" : "Pause"}
           </button>
-          <button type="button" onClick={() => setActiveIndex((index) => (index + 1) % count)}>
+          <button type="button" onClick={() => {
+            const nextIndex = (visibleIndex + 1) % count;
+            setActiveIndex(nextIndex);
+            setAnnouncement(`${projects[nextIndex].title}, project ${nextIndex + 1} of ${count}`);
+          }}>
             Next project
           </button>
         </div>

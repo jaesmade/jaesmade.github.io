@@ -469,7 +469,10 @@ export default function App() {
   }, [copyState]);
   return (
     <>
-      <a className="skip-link" href="#main">
+      <a className="skip-link" href="#main" onClick={(event) => {
+        event.preventDefault();
+        mainRef.current?.focus();
+      }}>
         Skip to content
       </a>
       <div className={`console-shell${page === "home" ? " console-shell-home" : ""}`}>
