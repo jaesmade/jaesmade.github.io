@@ -626,7 +626,7 @@ export default function App() {
                     </section>
                     {profile.certificates.length > 0 && (
                     <section className="certificate-section" aria-labelledby="certificates-heading">
-                      <h2 id="certificates-heading">Certificates</h2>
+                      <h2 id="certificates-heading">Certifications &amp; Trainings</h2>
                       <p className="certificate-intro">Certificates of participation from technical webinars.</p>
                         <ul className="certificate-list">
                           {profile.certificates.map((certificate) => (

@@ -21,6 +21,8 @@ The portfolio is published at https://jaesmade.github.io/ from the `jaesmade/jae
 
 The repository-root workflow `.github/workflows/deploy.yml` installs the locked dependencies with Node.js 24, lints and builds `CV_front`, and deploys only `CV_front/dist`. Push changes under `CV_front/` to `main` to publish them, or run **Deploy portfolio to GitHub Pages** manually from the Actions tab. The `base: "./"` configuration supports the root site and hash navigation without additional routing rules.
 
+Pull requests targeting `main` also run `.github/workflows/ci.yml`: the **Portfolio checks** job installs dependencies, lints, builds, and runs the Chromium browser tests without deploying. To enforce this check before merging, configure a branch protection rule or ruleset for `main` after the check has run on GitHub, and require **Portfolio checks**. Restrict direct pushes if all changes should go through pull requests.
+
 ## Personalize
 
 - `src/data/portfolio.ts`: name, introduction, About-page portrait, social links, skills, certificates, projects, and the `home` editorial configuration. `home.featuredProjects` is `"all"` to rotate through the portfolio in its existing order, or an array of exact project titles to choose a subset; slides retain portfolio order. `home.rotationIntervalMs` is `6000` for a six-second interval. Each featured slide reuses its project’s image, alt text, title, description, category, and first three technologies, without duplicate assets or project entries. Pause/Resume and Next project are compact secondary controls; on phones their counter sits above the two buttons. Featured descriptions remain 14px and technology labels 12px at every width. Rotation pauses while the panel is hovered or contains keyboard focus, while a project dialog is open, when the panel is offscreen, or when the document is hidden. Reduced-motion preference starts in manual mode and removes the fade. The fixed image region and shared grid rows reserve the tallest title, description, and technology content so changing projects does not move the surrounding layout. Homepage actions and links omit decorative arrows; the résumé action retains its meaningful download icon. View project opens the same accessible File window dialog used by Projects. View projects opens the project browser; Résumé downloads the existing PDF directly. The footer provides the shared Home, Projects, About, and Contact navigation plus the theme control; on phones, all four pages use five equal items with 52px targets and 10px labels. The role/location line follows the home greeting, above the introductory copy; redundant header and work-area navigation are omitted. Homepage social links omit Facebook while Contact retains the full social list.
@@ -46,7 +48,7 @@ Light/dark preference is stored locally when browser storage is available. Proje
 
 The About profile uses a portrait and résumé column beside the biography and education. Below 600px the résumé spans the full profile width; at 360px and below portrait and facts stack vertically. Its toolbox follows the [GitHub profile's Tech Stack](https://github.com/jaesmade/jaesmade/blob/main/README.md), combining Frontend and Backend into Web and retaining Automation; Machine Learning, AI, & Data Tools; Databases; and Tools & Design. Edit `skillGroups` in `src/data/portfolio.ts` to update the toolbox; `profile.skills` is derived from these groups.
 
-The Certificates section appears below My toolbox when you add entries to `profile.certificates` in `src/data/portfolio.ts`.
+The Certifications & Trainings section appears below My toolbox when you add entries to `profile.certificates` in `src/data/portfolio.ts`.
 
 The current list includes seven Koenig webinar participation certificates from March and May 2025, ordered newest first. The original PDFs are stored in `public/certificates/` with descriptive filenames. Titles and participation dates come from the supplied certificates; issuer verification URLs are omitted when unavailable.
 
@@ -82,4 +84,8 @@ Design inspiration: the supplied `dimflix.github.io-main` repository. The local 
 npm run check:images
 npm run build
 npm run lint
+npx playwright install chromium
+npm run test:e2e
 ```
+
+Run these commands from `CV_front/`. The browser suite serves the production build, so run `npm run build` before `npm run test:e2e`. The Playwright browser installation is needed once per environment.
